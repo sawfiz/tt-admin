@@ -12,7 +12,7 @@ import RootLayout from './RootLayout';
 import Home from '../pages/home/Home';
 import Admin from '../pages/admin/Admin';
 
-import ManageAthletes from '../components/ManageAthletes';
+import ManageAthletes from '../components/athlete/ManageAthletes';
 
 const routes = createRoutesFromElements(
   <Route path="/" element={<RootLayout />}>
