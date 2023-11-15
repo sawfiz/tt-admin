@@ -1,8 +1,12 @@
 // Libraries
-import {  useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { fetchData } from '../../util/apiServices';
+
+// Styling
+import { Button } from 'react-bootstrap';
 
 export default function AthleteDetails() {
   const { id } = useParams();
@@ -27,11 +31,13 @@ export default function AthleteDetails() {
     fetchDataFromAPI();
   }, [id]); // Include id as it is used in the useEffect
 
-  const imgSrc = data.photoURL
-    ? data.photoURL
-    : data.gender === 'male'
-    ? '/images/boy.png'
-    : '/images/girl.png';
+  const imgSrc =
+    data.photoURL ||
+    (data.gender === 'male'
+      ? '/images/boy.png'
+      : data.gender === 'female'
+      ? '/images/girl.png'
+      : '/images/unknown.png');
 
   return (
     <main>
@@ -43,7 +49,6 @@ export default function AthleteDetails() {
             <div>
               {/* Athlete full name */}
               <h2 className="mt-24 font-bold text-xl">{data.name}</h2>
-
               {/* Profile photo */}
               <div className=" absolute top-4 right-[0.5rem] w-28 h-28 overflow-hidden">
                 <img
@@ -52,7 +57,6 @@ export default function AthleteDetails() {
                   alt="profile"
                 />
               </div>
-
               {/* Personal details */}
               <div className="outline-dashed outline-2 outline-pink-300 p-2 grid grid-cols-[1fr_2fr] my-2">
                 <div className=" font-bold">Active</div>
@@ -71,6 +75,14 @@ export default function AthleteDetails() {
                 <div>{data.father}</div>
                 <div className=" font-bold">Mother</div>
                 <div>{data.mother}</div>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex justify-around">
+                <Link to={`/athlete/update/${id}`}>
+                  <Button variant="primary">Update</Button>
+                </Link>
+                <Button variant="danger">Delete</Button>
               </div>
             </div>
           )

@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
-
-import { postData } from '../../util/apiServices';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { fetchData, postData } from '../../util/apiServices';
 
 import { Button, Form, InputGroup } from 'react-bootstrap';
 
-const AthleteForm = ({ title, athlete }) => {
+const AthleteForm = ({ title}) => {
+
+  const { id } = useParams();
+
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -19,6 +22,25 @@ const AthleteForm = ({ title, athlete }) => {
     photoUrl: '',
   });
 
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const updateData = (newData) => {
+      setFormData(newData); // Function to update 'data' state
+    };
+
+    const fetchDataFromAPI = async () => {
+      try {
+        await fetchData(`api/athlete/${id}`, updateData, setLoading, 'athlete');
+        // 'athlete' is the specific key for the data in the response
+      } catch (error) {
+        // Handle error if needed
+      }
+    };
+
+    fetchDataFromAPI();
+  }, [id]); // Include id as it is used in the useEffect
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData({
@@ -29,7 +51,7 @@ const AthleteForm = ({ title, athlete }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (athlete) {
+    if (id) {
       // Logic for updating an existing athlete
       // Replace this with your actual update logic
     } else {
@@ -96,7 +118,7 @@ const AthleteForm = ({ title, athlete }) => {
           <Form.Control
             type="date"
             name="birthdate"
-            value={formData.birthdate}
+            value={formData.birthdate_yyyy_mm_dd}
             onChange={handleChange}
             required
           />
