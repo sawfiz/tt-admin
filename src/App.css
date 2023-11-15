@@ -27,15 +27,15 @@
 }
 
 .App {
-  background: var(--color-light);
-  width: clamp(var(--min-content-width), 100%, var(--max-content-width));
-  margin: auto;
-  position: relative;
-  min-height: calc(100vh - 1rem);
 }
 
 main {
-  margin: 1rem;
+  background: var(--color-light);
+  width: clamp(var(--min-content-width), 100%, var(--max-content-width));
+  margin: auto;
+  padding: 1rem;
+  position: relative;
+  min-height: calc(100vh - 1rem);
 }
 
 h2 {
