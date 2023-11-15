@@ -15,10 +15,10 @@ import NavbarBrand from 'react-bootstrap/esm/NavbarBrand';
 export default function Header() {
   return (
     <div>
-      <Navbar className='bg-slate-800 text-slate-200 px-3 py-1'>
+      <Navbar bg="dark" data-bs-theme="dark">
         <Container>
-          <NavbarBrand>Track Trackers Admin Tools</NavbarBrand>
-          <Nav className="flex justify-between">
+          <NavbarBrand>Track Trackers</NavbarBrand>
+          <Nav className="me-auto">
             <Nav.Link href="/">Home</Nav.Link>
             <Nav.Link href="#logout">Logout</Nav.Link>
           </Nav>

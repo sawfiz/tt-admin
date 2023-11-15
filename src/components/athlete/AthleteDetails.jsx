@@ -45,7 +45,7 @@ export default function AthleteDetails() {
               <h2 className="mt-24 font-bold text-xl">{data.name}</h2>
 
               {/* Profile photo */}
-              <div className=" absolute top-[3.5rem] right-[0.5rem] w-28 h-28 overflow-hidden">
+              <div className=" absolute top-4 right-[0.5rem] w-28 h-28 overflow-hidden">
                 <img
                   className="w-full h-full object-center object-cover rounded-lg "
                   src={imgSrc}
