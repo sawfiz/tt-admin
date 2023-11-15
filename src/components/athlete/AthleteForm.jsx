@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { fetchData, postData } from '../../util/apiServices';
+import { useParams, Navigate, useNavigate } from 'react-router-dom';
+import { getData, postData, putData } from '../../util/apiServices';
 
 import { Button, Form, InputGroup } from 'react-bootstrap';
 
 const AthleteForm = ({ title }) => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     first_name: '',
@@ -28,16 +29,16 @@ const AthleteForm = ({ title }) => {
       setFormData(newData); // Function to update 'data' state
     };
 
-    const fetchDataFromAPI = async () => {
+    const getDataFromAPI = async () => {
       try {
-        await fetchData(`api/athlete/${id}`, updateData, setLoading, 'athlete');
+        await getData(`api/athlete/${id}`, updateData, setLoading, 'athlete');
         // 'athlete' is the specific key for the data in the response
       } catch (error) {
         // Handle error if needed
       }
     };
 
-    fetchDataFromAPI();
+    getDataFromAPI();
   }, [id]); // Include id as it is used in the useEffect
 
   const handleChange = (event) => {
@@ -52,12 +53,13 @@ const AthleteForm = ({ title }) => {
     event.preventDefault();
     if (id) {
       // Logic for updating an existing athlete
-      console.log('Perform UPDATE request:', formData);
+      console.log('Perform PUT request:', formData);
       try {
-        const updateAthlete = await postData(`/api/athlete/${id}/update`, formData);
-        console.log('Athlete created successfully:', updateAthlete);
+        const updateAthlete = await putData(`/api/athlete/${id}`, formData);
+        console.log('Athlete updated successfully:', updateAthlete);
 
         // Handle success, reset form, or navigate to a different page
+        navigate('/manage-athletes');
       } catch (error) {
         // Handle error state or show an error message to the user
       }
@@ -70,6 +72,7 @@ const AthleteForm = ({ title }) => {
         console.log('Athlete created successfully:', createdAthlete);
 
         // Handle success, reset form, or navigate to a different page
+        navigate('/manage-athletes');
       } catch (error) {
         // Handle error state or show an error message to the user
       }

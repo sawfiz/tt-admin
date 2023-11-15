@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
-import { fetchData } from '../../util/apiServices';
+import { getData } from '../../util/apiServices';
 
 // Styling
 import { Button } from 'react-bootstrap';
@@ -19,16 +19,16 @@ export default function AthleteDetails() {
       setData(newData); // Function to update 'data' state
     };
 
-    const fetchDataFromAPI = async () => {
+    const getDataFromAPI = async () => {
       try {
-        await fetchData(`api/athlete/${id}`, updateData, setLoading, 'athlete');
+        await getData(`api/athlete/${id}`, updateData, setLoading, 'athlete');
         // 'athlete' is the specific key for the data in the response
       } catch (error) {
         // Handle error if needed
       }
     };
 
-    fetchDataFromAPI();
+    getDataFromAPI();
   }, [id]); // Include id as it is used in the useEffect
 
   const imgSrc =

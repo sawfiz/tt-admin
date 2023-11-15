@@ -20,6 +20,7 @@ export default function Header() {
           <NavbarBrand>Track Trackers</NavbarBrand>
           <Nav className="me-auto">
             <Nav.Link href="/">Home</Nav.Link>
+            <Nav.Link href="/admin">Admin</Nav.Link>
             <Nav.Link href="#logout">Logout</Nav.Link>
           </Nav>
         </Container>

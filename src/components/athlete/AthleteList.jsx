@@ -9,7 +9,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 
 // Utilities
-import { fetchData } from '../../util/apiServices';
+import { getData } from '../../util/apiServices';
 
 const AthleteList = () => {
   const [data, setData] = useState([]);
@@ -40,16 +40,16 @@ const AthleteList = () => {
       setData(newData); // Function to update 'data' state
     };
 
-    const fetchDataFromAPI = async () => {
+    const getDataFromAPI = async () => {
       try {
-        await fetchData('api/athletes', updateData, setLoading, 'athlete_list');
+        await getData('api/athletes', updateData, setLoading, 'athlete_list');
         // 'athlete_list' is the specific key for the data in the response
       } catch (error) {
         // Handle error if needed
       }
     };
 
-    fetchDataFromAPI();
+    getDataFromAPI();
   }, []);
 
   // Render the Athlete components
@@ -102,7 +102,7 @@ const AthleteList = () => {
             </div>
 
             {/* Filtered athlete list */}
-            <div className="grid grid-cols-2 gap-[10px] md:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-[10px] md:grid-cols-3 lg:grid-cols-4 mb-4">
               {athleteButtons}
             </div>
           </div>
