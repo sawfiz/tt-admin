@@ -4,8 +4,7 @@ import { fetchData, postData } from '../../util/apiServices';
 
 import { Button, Form, InputGroup } from 'react-bootstrap';
 
-const AthleteForm = ({ title}) => {
-
+const AthleteForm = ({ title }) => {
   const { id } = useParams();
 
   const [formData, setFormData] = useState({
@@ -53,6 +52,15 @@ const AthleteForm = ({ title}) => {
     event.preventDefault();
     if (id) {
       // Logic for updating an existing athlete
+      console.log('Perform UPDATE request:', formData);
+      try {
+        const updateAthlete = await postData(`/api/athlete/${id}/update`, formData);
+        console.log('Athlete created successfully:', updateAthlete);
+
+        // Handle success, reset form, or navigate to a different page
+      } catch (error) {
+        // Handle error state or show an error message to the user
+      }
       // Replace this with your actual update logic
     } else {
       // Logic for creating a new athlete
@@ -65,7 +73,6 @@ const AthleteForm = ({ title}) => {
       } catch (error) {
         // Handle error state or show an error message to the user
       }
-      // Replace this with your actual create logic
     }
   };
 
