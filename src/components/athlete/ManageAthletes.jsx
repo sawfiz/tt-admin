@@ -1,14 +1,20 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+// Libraries
+import React, { useContext, useEffect, useState } from 'react';
+
+// Components
 import AthleteList from './AthleteList';
 
+// Styling
+import Button from 'react-bootstrap/esm/Button';
+
 const ManageAthletes = () => {
+
   return (
-    <div>
+    <main>
       <h2>Manage Athletes</h2>
       {/* <Link to="/athletes/new">Add New Athlete</Link> */}
       <AthleteList />
-    </div>
+    </main>
   );
 };
 
