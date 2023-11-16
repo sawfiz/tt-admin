@@ -63,3 +63,25 @@ export const putData = async (endpoint, data) => {
     throw new Error('Failed to UPDATE data.');
   }
 };
+
+export const deleteData = async (endpoint) => {
+  try {
+    const response = await fetch(`${BASE_URL}${endpoint}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to DELETE data.');
+    }
+
+    const result = await response.json();
+    return result;
+
+  } catch (error) {
+    console.error('Error DELETE data:', error);
+    throw new Error('Failed to DELETE data.');
+  }
+};

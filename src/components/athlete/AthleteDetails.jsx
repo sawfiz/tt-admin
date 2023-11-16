@@ -1,19 +1,21 @@
 // Libraries
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
-import { getData } from '../../util/apiServices';
+import { getData, deleteData } from '../../util/apiServices';
 
 // Styling
-import { Button } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 
 export default function AthleteDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const updateData = (newData) => {
@@ -40,8 +42,37 @@ export default function AthleteDetails() {
       ? '/images/girl.png'
       : '/images/unknown.png');
 
+  // Function to open the delete confirmation modal
+  const handleShowModal = () => {
+    setShowModal(true);
+  };
+
+  // Function to close the delete confirmation modal
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleDelete = async () => {
+    try {
+      // Send API request to delete the athlete
+      await deleteData(`/api/athlete/${id}`);
+      // Redirect or perform any other action upon successful deletion
+      navigate('/manage-athletes'); // Redirect to athletes page after deletion
+    } catch (error) {
+      console.error('Error deleting athlete:', error);
+      // Handle error state or show an error message to the user
+    }
+  };
+
+  const handleDeleteConfirmation = () => {
+    handleCloseModal(); // Close the modal
+    handleDelete(); // Trigger the delete function
+  };
   return (
     <main>
+      <Link to="/manage-athletes">
+        <Button variant="outline-secondary">⬅️ Atheltes</Button>
+      </Link>
       <div>
         {loading ? (
           <p>Loading...</p>
@@ -83,12 +114,30 @@ export default function AthleteDetails() {
                 <Link to={`/athlete/update/${id}`}>
                   <Button variant="primary">Update</Button>
                 </Link>
-                <Button variant="danger">Delete</Button>
+                <Button variant="danger" onClick={handleShowModal}>
+                  Delete
+                </Button>
               </div>
             </div>
           )
         )}
       </div>
+
+      {/* Delete confirmation modal */}
+      <Modal show={showModal} onHide={handleCloseModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this athlete?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDeleteConfirmation}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </main>
   );
 }

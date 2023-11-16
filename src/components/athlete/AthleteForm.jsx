@@ -5,12 +5,15 @@ import { getData, postData, putData } from '../../util/apiServices';
 import { format } from 'date-fns';
 
 // Styling
-import { Button, Form, InputGroup } from 'react-bootstrap';
+import { Button, Form, InputGroup, Modal } from 'react-bootstrap';
 
 const AthleteForm = ({ title }) => {
   const { id } = useParams();
   const today = new Date();
   const navigate = useNavigate();
+
+  // State variables
+  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     first_name: '',
@@ -26,8 +29,7 @@ const AthleteForm = ({ title }) => {
     photoUrl: '',
   });
 
-  const [loading, setLoading] = useState(true);
-
+  // If an id is provided in the route, GET data of the athlete
   useEffect(() => {
     const updateData = (newData) => {
       setFormData(newData); // Function to update 'data' state
@@ -86,9 +88,9 @@ const AthleteForm = ({ title }) => {
   return (
     <main>
       <Form onSubmit={handleSubmit}>
-        {/* Input fields */}
         <h2>{title} Athlete</h2>
 
+        {/* Input fields */}
         <InputGroup className="mb-3">
           <InputGroup.Text>First Name</InputGroup.Text>
           <Form.Control
