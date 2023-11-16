@@ -19,13 +19,13 @@ const AthleteForm = ({ title }) => {
     first_name: '',
     last_name: '',
     gender: '',
-    birthdate: '',
+    birthdate: new Date(),
     father: '',
     mother: '',
     mobile: '',
     email: '',
     school: '',
-    active: '',
+    active: true,
     photoUrl: '',
   });
 
@@ -91,6 +91,13 @@ const AthleteForm = ({ title }) => {
     }
   };
 
+  const handleCancel = () => {
+    if (title === 'Create') {
+      navigate('/manage-athletes');
+    }
+    // In case of Update, the cancel button is automatically handled
+  };
+
   return (
     <main>
       <Form onSubmit={handleSubmit}>
@@ -140,11 +147,7 @@ const AthleteForm = ({ title }) => {
           <Form.Control
             type="date"
             name="birthdate"
-            value={
-              formData.birthdate
-                ? format(new Date(formData.birthdate), 'yyyy-MM-dd')
-                : format(today, 'yyyy-MM-dd')
-            }
+            value={format(formData.birthdate, 'yyyy-MM-dd')}
             onChange={handleChange}
             required
           />
@@ -190,7 +193,12 @@ const AthleteForm = ({ title }) => {
           />
         </InputGroup>
 
-        <Button type="submit">{title}</Button>
+        <div className="flex justify-around">
+          <Button type="submit">{title}</Button>
+          <Button variant="secondary" type="cancel" onClick={handleCancel}>
+            Cancel
+          </Button>
+        </div>
       </Form>
     </main>
   );
