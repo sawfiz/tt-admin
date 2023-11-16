@@ -34,17 +34,20 @@ export const postData = async (endpoint, data) => {
     });
 
     const result = await response.json();
-
+    // Check if status on successful (outside 200-299)
     if (!response.ok) {
+      // Check if backend validation failed, 400
       if (response.status === 400) {
         // throw new Error(JSON.stringify(result.errors));
+        // return with error messages
         return result;
       }
+      // Other errors
       throw new Error('Failed to POST data.');
     }
-
+    // response is OK, i.e., in 200-299, return success message
     return result;
-  } catch (error) {
+  } catch (error) { // General errors outside HTTP status codes
     console.error('Error POST data:', error);
     throw new Error('Failed to POST data.');
   }
@@ -60,15 +63,23 @@ export const putData = async (endpoint, data) => {
       body: JSON.stringify(data),
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to UPDATE data.');
-    }
-
     const result = await response.json();
+    // Check if status on successful (outside 200-299)
+    if (!response.ok) {
+      // Check if backend validation failed, 400
+      if (response.status === 400) {
+        // throw new Error(JSON.stringify(result.errors));
+        // return with error messages
+        return result;
+      }
+      // Other errors
+      throw new Error('Failed to POST data.');
+    }
+    // response is OK, i.e., in 200-299, return success message
     return result;
-  } catch (error) {
+  } catch (error) { // General errors outside HTTP status codes
     console.error('Error POST data:', error);
-    throw new Error('Failed to UPDATE data.');
+    throw new Error('Failed to POST data.');
   }
 };
 

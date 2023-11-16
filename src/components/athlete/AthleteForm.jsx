@@ -9,7 +9,6 @@ import { Button, Form, InputGroup } from 'react-bootstrap';
 
 const AthleteForm = ({ title }) => {
   const { id } = useParams();
-  const today = new Date();
   const navigate = useNavigate();
 
   // State variables
@@ -69,33 +68,41 @@ const AthleteForm = ({ title }) => {
       console.log('Perform PUT request:', formData);
       try {
         const updateAthlete = await putData(`/api/athlete/${id}`, formData);
-        console.log('Athlete updated successfully:', updateAthlete);
-
-        // Handle success, reset form, or navigate to a different page
-        navigate(`/athlete/${id}`);
+        if (updateAthlete.errors) {
+          // Handle backend validation errors
+          const errors = updateAthlete.errors.errors.map((err) => ({
+            path: err.path,
+            msg: err.msg,
+          }));
+          setErrors(errors);
+        } else {
+          // Handle success, reset form, or navigate to a different page
+          console.log('Athlete created successfully:', updateAthlete);
+          navigate(`/athlete/${id}`);
+        }
       } catch (error) {
+        // General errors
         // Handle error state or show an error message to the user
       }
-      // Replace this with your actual update logic
     } else {
       // Logic for creating a new athlete
       console.log('Perform POST request:', formData);
       try {
         const createAthlete = await postData('/api/athlete/create', formData);
-
         if (createAthlete.errors) {
+          // Handle backend validation errors
           const errors = createAthlete.errors.errors.map((err) => ({
             path: err.path,
             msg: err.msg,
           }));
           setErrors(errors);
         } else {
+          // Handle success, reset form, or navigate to a different page
           console.log('Athlete created successfully:', createAthlete);
           navigate('/manage-athletes');
         }
-
-        // Handle success, reset form, or navigate to a different page
       } catch (error) {
+        // General errors
         // Handle error state or show an error message to the user
       }
     }
@@ -174,7 +181,8 @@ const AthleteForm = ({ title }) => {
           <Form.Control
             type="date"
             name="birthdate"
-            value={format(new Date(formData.birthdate), 'yyyy-MM-dd')}
+            value={formData.birthdate ? format(new Date(formData.birthdate), 'yyyy-MM-dd') :
+            format(new Date(), 'yyyy-MM-dd')}
             onChange={handleChange}
             required
           />
