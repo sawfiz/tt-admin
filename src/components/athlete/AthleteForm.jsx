@@ -1,11 +1,15 @@
+// Libraries
 import React, { useState, useEffect } from 'react';
-import { useParams, Navigate, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getData, postData, putData } from '../../util/apiServices';
+import { format } from 'date-fns';
 
+// Styling
 import { Button, Form, InputGroup } from 'react-bootstrap';
 
 const AthleteForm = ({ title }) => {
   const { id } = useParams();
+  const today = new Date();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -59,7 +63,7 @@ const AthleteForm = ({ title }) => {
         console.log('Athlete updated successfully:', updateAthlete);
 
         // Handle success, reset form, or navigate to a different page
-        navigate('/manage-athletes');
+        navigate(`/athlete/${id}`);
       } catch (error) {
         // Handle error state or show an error message to the user
       }
@@ -128,7 +132,11 @@ const AthleteForm = ({ title }) => {
           <Form.Control
             type="date"
             name="birthdate"
-            value={formData.birthdate_yyyy_mm_dd}
+            value={
+              formData.birthdate
+                ? format(new Date(formData.birthdate), 'yyyy-MM-dd')
+                : format(today, 'yyyy-MM-dd')
+            }
             onChange={handleChange}
             required
           />

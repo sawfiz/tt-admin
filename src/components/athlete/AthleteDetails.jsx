@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
 
 import { getData } from '../../util/apiServices';
 
@@ -64,7 +65,7 @@ export default function AthleteDetails() {
                 <div className=" font-bold">Gender</div>
                 <div>{data.gender}</div>
                 <div className=" font-bold">Birthdate</div>
-                <div>{data.birthdate_yyyy_mm_dd}</div>
+                <div>{format(new Date(data.birthdate), 'yyyy-MM-dd')}</div>
                 <div className=" font-bold">Mobile</div>
                 <div>{data.mobile}</div>
                 <div className=" font-bold">Email</div>
