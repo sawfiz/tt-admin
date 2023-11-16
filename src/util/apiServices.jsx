@@ -72,6 +72,12 @@ export const deleteData = async (endpoint) => {
         'Content-Type': 'application/json',
       },
     });
+    console.log("🚀 ~ file: apiServices.jsx:71 ~ deleteData ~ response:", response)
+
+    // Handling for a successful deletion with 204 status code
+    if (response.status === 204) {
+      return { success: true };
+    }
 
     if (!response.ok) {
       throw new Error('Failed to DELETE data.');

@@ -5,7 +5,7 @@ import { getData, postData, putData } from '../../util/apiServices';
 import { format } from 'date-fns';
 
 // Styling
-import { Button, Form, InputGroup, Modal } from 'react-bootstrap';
+import { Button, Form, InputGroup } from 'react-bootstrap';
 
 const AthleteForm = ({ title }) => {
   const { id } = useParams();
@@ -44,7 +44,7 @@ const AthleteForm = ({ title }) => {
       }
     };
 
-    getDataFromAPI();
+    if (id) getDataFromAPI(); // Only fetch data if id is in the route
   }, [id]); // Include id as it is used in the useEffect
 
   const handleChange = (event) => {

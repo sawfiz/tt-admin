@@ -15,7 +15,7 @@ const AthleteList = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [activeOnly, setActiveOnly] = useState(false);
+  const [activeOnly, setActiveOnly] = useState(true);
   const [selectedGender, setSelectedGender] = useState(null);
   const [searchText, setSearchText] = useState('');
 
@@ -84,6 +84,7 @@ const AthleteList = () => {
               <div>
                 <input
                   type="checkbox"
+                  checked={activeOnly}
                   onChange={(e) => setActiveOnly(e.target.checked)}
                 />{' '}
                 <span className="text-slate-800">Active only </span>
