@@ -14,6 +14,7 @@ const AthleteForm = ({ title }) => {
 
   // State variables
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState([]);
 
   const [formData, setFormData] = useState({
     first_name: '',
@@ -80,11 +81,20 @@ const AthleteForm = ({ title }) => {
       // Logic for creating a new athlete
       console.log('Perform POST request:', formData);
       try {
-        const createdAthlete = await postData('/api/athlete/create', formData);
-        console.log('Athlete created successfully:', createdAthlete);
+        const createAthlete = await postData('/api/athlete/create', formData);
+
+        if (createAthlete.errors) {
+          const errors = createAthlete.errors.errors.map((err) => ({
+            path: err.path,
+            msg: err.msg,
+          }));
+          setErrors(errors);
+        } else {
+          console.log('Athlete created successfully:', createAthlete);
+          navigate('/manage-athletes');
+        }
 
         // Handle success, reset form, or navigate to a different page
-        navigate('/manage-athletes');
       } catch (error) {
         // Handle error state or show an error message to the user
       }
@@ -96,6 +106,20 @@ const AthleteForm = ({ title }) => {
       navigate('/manage-athletes');
     }
     // In case of Update, the cancel button is automatically handled
+  };
+
+  // To show backend validation error for an input field
+  const showError = (fieldName) => {
+    return errors.map((error, index) => {
+      if (error.path === fieldName) {
+        return (
+          <p key={index} style={{ color: 'red' }}>
+            {error.msg}
+          </p>
+        );
+      }
+      return null;
+    });
   };
 
   return (
@@ -115,6 +139,7 @@ const AthleteForm = ({ title }) => {
             autoFocus
           />
         </InputGroup>
+        {showError('first_name')}
 
         <InputGroup className="mb-3">
           <InputGroup.Text>Last Name</InputGroup.Text>
@@ -126,6 +151,7 @@ const AthleteForm = ({ title }) => {
             required
           />
         </InputGroup>
+        {showError('last_name')}
 
         <InputGroup className="mb-3">
           <InputGroup.Text>Gender</InputGroup.Text>
@@ -141,17 +167,19 @@ const AthleteForm = ({ title }) => {
             <option value="female">Female</option>
           </Form.Control>
         </InputGroup>
+        {showError('gender')}
 
         <InputGroup className="mb-3">
           <InputGroup.Text id="birthdate">Birthdate</InputGroup.Text>
           <Form.Control
             type="date"
             name="birthdate"
-            value={format(formData.birthdate, 'yyyy-MM-dd')}
+            value={format(new Date(formData.birthdate), 'yyyy-MM-dd')}
             onChange={handleChange}
             required
           />
         </InputGroup>
+        {showError('birthdate')}
 
         <InputGroup className="mb-3">
           <InputGroup.Text id="mobile">Mobile</InputGroup.Text>
@@ -162,6 +190,7 @@ const AthleteForm = ({ title }) => {
             onChange={handleChange}
           />
         </InputGroup>
+        {showError('mobile')}
 
         <InputGroup className="mb-3">
           <InputGroup.Text id="email">Email</InputGroup.Text>
@@ -172,6 +201,7 @@ const AthleteForm = ({ title }) => {
             onChange={handleChange}
           />
         </InputGroup>
+        {showError('email')}
 
         <InputGroup className="mb-3">
           <InputGroup.Text id="school">School</InputGroup.Text>
@@ -182,6 +212,7 @@ const AthleteForm = ({ title }) => {
             onChange={handleChange}
           />
         </InputGroup>
+        {showError('school')}
 
         <InputGroup className="mb-3">
           <InputGroup.Text id="active">Active</InputGroup.Text>

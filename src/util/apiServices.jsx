@@ -1,7 +1,12 @@
 // Vite handles .env differently from create-react-app
-const BASE_URL = import.meta.env.VITE_BASE_URL // Set the base URL
+const BASE_URL = import.meta.env.VITE_BASE_URL; // Set the base URL
 
-export const getData = async (endpoint, setData, setLoading, dataKey = null) => {
+export const getData = async (
+  endpoint,
+  setData,
+  setLoading,
+  dataKey = null
+) => {
   try {
     setLoading(true);
 
@@ -28,13 +33,17 @@ export const postData = async (endpoint, data) => {
       body: JSON.stringify(data),
     });
 
+    const result = await response.json();
+
     if (!response.ok) {
+      if (response.status === 400) {
+        // throw new Error(JSON.stringify(result.errors));
+        return result;
+      }
       throw new Error('Failed to POST data.');
     }
 
-    const result = await response.json();
     return result;
-
   } catch (error) {
     console.error('Error POST data:', error);
     throw new Error('Failed to POST data.');
@@ -57,7 +66,6 @@ export const putData = async (endpoint, data) => {
 
     const result = await response.json();
     return result;
-
   } catch (error) {
     console.error('Error POST data:', error);
     throw new Error('Failed to UPDATE data.');
@@ -72,7 +80,10 @@ export const deleteData = async (endpoint) => {
         'Content-Type': 'application/json',
       },
     });
-    console.log("🚀 ~ file: apiServices.jsx:71 ~ deleteData ~ response:", response)
+    console.log(
+      '🚀 ~ file: apiServices.jsx:71 ~ deleteData ~ response:',
+      response
+    );
 
     // Handling for a successful deletion with 204 status code
     if (response.status === 204) {
@@ -85,7 +96,6 @@ export const deleteData = async (endpoint) => {
 
     const result = await response.json();
     return result;
-
   } catch (error) {
     console.error('Error DELETE data:', error);
     throw new Error('Failed to DELETE data.');
