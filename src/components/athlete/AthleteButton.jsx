@@ -21,15 +21,15 @@ export default function AthleteButton({ data, small }) {
 
   return (
     <Link to={`/athlete/${data._id}`} className="no-underline text-slate-700">
-      {small ? (
+      { data.active ? (
         <div className="h-10 outline-dashed outline-1 outline-pink-300 flex justify-between items-center p-1">
           {data.name}
           <div className="w-8 h-8">{image}</div>
         </div>
       ) : (
-        <div className="h-48 outline-dashed outline-2 outline-pink-300 flex flex-col justify-around items-center">
-          <div className="w-32 h-32"> {image}</div>
+        <div className="h-10 outline-dashed outline-1 outline-slate-300 bg-gray-300 opacity-50 flex justify-between items-center p-1">
           {data.name}
+          <div className="w-8 h-8">{image}</div>
         </div>
       )}
     </Link>

@@ -20,6 +20,10 @@ export default function AthleteDetails() {
   useEffect(() => {
     const updateData = (newData) => {
       setData(newData); // Function to update 'data' state
+      console.log(
+        '🚀 ~ file: AthleteDetails.jsx:23 ~ updateData ~ newData:',
+        newData
+      );
     };
 
     const getDataFromAPI = async () => {
@@ -96,7 +100,11 @@ export default function AthleteDetails() {
                 <div className=" font-bold">Gender</div>
                 <div>{data.gender}</div>
                 <div className=" font-bold">Birthdate</div>
-                <div>{format(new Date(data.birthdate), 'yyyy-MM-dd')}</div>
+                <div>
+                  {data.birthdate
+                    ? format(new Date(data.birthdate), 'yyyy-MM-dd')
+                    : ''}
+                </div>
                 <div className=" font-bold">Mobile</div>
                 <div>{data.mobile}</div>
                 <div className=" font-bold">Email</div>

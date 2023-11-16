@@ -38,6 +38,7 @@ const AthleteList = () => {
   useEffect(() => {
     const updateData = (newData) => {
       setData(newData); // Function to update 'data' state
+      console.log("🚀 ~ file: AthleteList.jsx:41 ~ updateData ~ newData:", newData)
     };
 
     const getDataFromAPI = async () => {

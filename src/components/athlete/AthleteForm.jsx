@@ -25,7 +25,7 @@ const AthleteForm = ({ title }) => {
     mobile: '',
     email: '',
     school: '',
-    active: true,
+    active: '',
     photoUrl: '',
   });
 
@@ -48,11 +48,17 @@ const AthleteForm = ({ title }) => {
   }, [id]); // Include id as it is used in the useEffect
 
   const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    const { name, value, type, checked } = event.target;
+    let inputValue;
+    if (type === 'checkbox') {
+      inputValue = checked;
+    } else {
+      inputValue = value;
+    }
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: inputValue,
+    }));
   };
 
   const handleSubmit = async (event) => {
@@ -170,6 +176,16 @@ const AthleteForm = ({ title }) => {
             type="text"
             name="school"
             value={formData.school}
+            onChange={handleChange}
+          />
+        </InputGroup>
+
+        <InputGroup className="mb-3">
+          <InputGroup.Text id="active">Active</InputGroup.Text>
+          <Form.Check
+            type="checkbox"
+            name="active"
+            checked={formData.active}
             onChange={handleChange}
           />
         </InputGroup>
