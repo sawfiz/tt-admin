@@ -15,6 +15,9 @@ export default function Signup() {
     username: '',
     password1: '',
     password2: '',
+    first_name: '',
+    last_name: '',
+    gender: '',
   });
   const [match, setMatch] = useState(true);
   const [errors, setErrors] = useState([]);
@@ -22,6 +25,9 @@ export default function Signup() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    if (name === 'password1') {
+      setFormData((prevFormData) => ({ ...prevFormData, password: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -32,11 +38,9 @@ export default function Signup() {
 
     if (password1 === password2) {
       try {
-        const dataToSend = {
-          username: formData.username,
-          password: formData.password1,
-        };
-        const createUser = await postData('/api/users', dataToSend);
+        const createUser = await postData('/api/users', formData);
+
+        // TODO: need to deal with 500, MongoDB is down
         if (createUser.errors) {
           // Handle backend validation errors
           const errors = createUser.errors.errors.map((err) => ({
@@ -46,7 +50,7 @@ export default function Signup() {
           setErrors(errors);
         } else {
           // Handle success, reset form, or navigate to a different page
-          console.log('Athlete created successfully:', createUser);
+          console.log('User created successfully:', createUser);
           navigate('/');
         }
       } catch (error) {
@@ -72,9 +76,63 @@ export default function Signup() {
 
   return (
     <main>
-      <h3>Signup</h3>
+      <h3 className="mb-4">Signup</h3>
       <Form onSubmit={handleSubmit}>
-        <div>
+        <div className="flex justify-between w-80 items-center">
+          <div>
+            <label>First name</label>
+          </div>
+          <input
+            type="text"
+            name="first_name"
+            placeholder="Usain"
+            value={formData.first_name}
+            onChange={handleChange}
+            required
+            autoComplete="true"
+            className="px-1 mb-2 w-40"
+          />
+        </div>
+        {showError('first_name')}
+
+        <div className="flex justify-between w-80 items-center">
+          <div>
+            <label>Last name</label>
+          </div>
+          <input
+            type="text"
+            name="last_name"
+            placeholder="Bolt"
+            value={formData.last_name}
+            onChange={handleChange}
+            required
+            autoComplete="true"
+            className="px-1 mb-2 w-40"
+          />
+        </div>
+        {showError('last_name')}
+
+        <div className="flex justify-between w-80 items-center">
+          <div>
+            <label>Gender</label>
+          </div>
+          <select
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            required
+            className="p-1 ml-4 mb-2 w-20"
+          >
+            <option value="">-</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+        {showError('gender')}
+
+        <hr />
+
+        <div className="flex justify-between w-80 items-center">
           <div>
             <label>Username</label>
           </div>
@@ -86,12 +144,12 @@ export default function Signup() {
             onChange={handleChange}
             required
             autoComplete="true"
-            className="px-1 my-2 w-40"
+            className="px-1 mb-2 w-40"
           />
         </div>
         {showError('username')}
 
-        <div>
+        <div className="flex justify-between w-80 items-center">
           <div>
             <label>New password</label>
           </div>
@@ -103,12 +161,12 @@ export default function Signup() {
             onChange={handleChange}
             required
             autoComplete="true"
-            className="px-1 my-2 w-40"
+            className="px-1 mb-2 w-40"
           />
         </div>
         {showError('password')}
 
-        <div>
+        <div className="flex justify-between w-80 items-center">
           <div>
             <label>Re-enter password</label>
           </div>
@@ -120,14 +178,14 @@ export default function Signup() {
             onChange={handleChange}
             required
             autoComplete="true"
-            className="px-1 my-2 w-40"
+            className="px-1 mb-2 w-40"
           />
         </div>
 
         {match ? '' : <p className="text-danger">Passwords do not match.</p>}
 
-        <Button type="submit" className="mt-2 py-0">
-          Signup
+        <Button type="submit" className="mt-2">
+          Submit
         </Button>
       </Form>
     </main>
