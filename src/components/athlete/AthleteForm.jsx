@@ -37,7 +37,7 @@ const AthleteForm = ({ title }) => {
 
     const getDataFromAPI = async () => {
       try {
-        await getData(`api/athlete/${id}`, updateData, setLoading, 'athlete');
+        await getData(`api/athletes/${id}`, updateData, setLoading, 'athlete');
         // 'athlete' is the specific key for the data in the response
       } catch (error) {
         // Handle error if needed
@@ -67,7 +67,7 @@ const AthleteForm = ({ title }) => {
       // Logic for updating an existing athlete
       console.log('Perform PUT request:', formData);
       try {
-        const updateAthlete = await putData(`/api/athlete/${id}`, formData);
+        const updateAthlete = await putData(`/api/athletes/${id}`, formData);
         if (updateAthlete.errors) {
           // Handle backend validation errors
           const errors = updateAthlete.errors.errors.map((err) => ({
@@ -88,7 +88,7 @@ const AthleteForm = ({ title }) => {
       // Logic for creating a new athlete
       console.log('Perform POST request:', formData);
       try {
-        const createAthlete = await postData('/api/athlete/create', formData);
+        const createAthlete = await postData('/api/athletes', formData);
         if (createAthlete.errors) {
           // Handle backend validation errors
           const errors = createAthlete.errors.errors.map((err) => ({

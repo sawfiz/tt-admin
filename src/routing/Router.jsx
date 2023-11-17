@@ -10,6 +10,7 @@ import RootLayout from './RootLayout';
 
 // Page components
 import Home from '../pages/home/Home';
+import Signup from '../pages/home/Signup';
 import Admin from '../pages/admin/Admin';
 
 import ManageAthletes from '../components/athlete/ManageAthletes';
@@ -19,6 +20,9 @@ import AthleteForm from '../components/athlete/AthleteForm';
 const routes = createRoutesFromElements(
   <Route path="/" element={<RootLayout />} >
     <Route index element={<Home />} />
+
+    <Route path="/signup" element={<Signup />} />
+
     <Route path="/manage-athletes" element={<ManageAthletes />} />
 
     {/*Create a new athlete */}

@@ -28,7 +28,7 @@ export default function AthleteDetails() {
 
     const getDataFromAPI = async () => {
       try {
-        await getData(`api/athlete/${id}`, updateData, setLoading, 'athlete');
+        await getData(`api/athletes/${id}`, updateData, setLoading, 'athlete');
         // 'athlete' is the specific key for the data in the response
       } catch (error) {
         // Handle error if needed
@@ -59,7 +59,7 @@ export default function AthleteDetails() {
   const handleDelete = async () => {
     try {
       // Send API request to delete the athlete
-      await deleteData(`/api/athlete/${id}`);
+      await deleteData(`/api/athletes/${id}`);
       // Redirect or perform any other action upon successful deletion
       navigate('/manage-athletes'); // Redirect to athletes page after deletion
     } catch (error) {

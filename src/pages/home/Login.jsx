@@ -1,24 +1,25 @@
 // Libraries
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 
 // Styling
-import { Form, Row, Col, Button } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 
 export default function Login() {
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
-  };
-
   const [formData, setFormData] = useState({
     username: '',
     password: '',
   });
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+  };
+
+  const handleSubmit = async () => {};
+
   return (
     <>
-      <Form>
+      <Form onSubmit={handleSubmit}>
         <input
           type="text"
           name="username"
