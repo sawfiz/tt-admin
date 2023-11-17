@@ -1,19 +1,28 @@
 // Libraries
-import { NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+
+// Components
+import Login from './Login';
+
+// Styling
+import { Form, Row, Col, Button } from 'react-bootstrap';
 
 export default function Home() {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+  };
+
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+  });
 
   return (
     <main>
-      <h1>Home</h1>
-      <NavLink
-          to="/admin"
-          className={
-            'flex items-end pb-1 no-underline text-slate-400 hover:text-slate-200'
-          }
-        >
-          Admin
-        </NavLink>
+      <p>Welcome, please login or <Link to="/signup">Sign up</Link></p>
+      <Login />
     </main>
   );
 }

@@ -17,7 +17,7 @@ import AthleteDetails from '../components/athlete/AthleteDetails';
 import AthleteForm from '../components/athlete/AthleteForm';
 
 const routes = createRoutesFromElements(
-  <Route path="/" element={<RootLayout />}>
+  <Route path="/" element={<RootLayout />} >
     <Route index element={<Home />} />
     <Route path="/manage-athletes" element={<ManageAthletes />} />
 
