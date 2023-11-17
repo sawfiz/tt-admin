@@ -27,6 +27,7 @@ export default function Login() {
           value={formData.username}
           onChange={handleChange}
           required
+          autoComplete='true'
           className="px-1 mr-2 w-32"
         />
 
@@ -37,6 +38,7 @@ export default function Login() {
           value={formData.password}
           onChange={handleChange}
           required
+          autoComplete='true'
           className="px-1 w-32 mr-2"
         />
 

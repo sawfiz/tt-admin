@@ -27,12 +27,16 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-    const {password1, password2} = formData;
-    setMatch(password1 === password2)
+    const { password1, password2 } = formData;
+    setMatch(password1 === password2);
 
     if (password1 === password2) {
       try {
-        const createUser = await postData('/api/user/create', formData);
+        const dataToSend = {
+          username: formData.username,
+          password: formData.password1,
+        };
+        const createUser = await postData('/api/users', dataToSend);
         if (createUser.errors) {
           // Handle backend validation errors
           const errors = createUser.errors.errors.map((err) => ({
@@ -50,6 +54,20 @@ export default function Signup() {
         // Handle error state or show an error message to the user
       }
     }
+  };
+
+  // To show backend validation error for an input field
+  const showError = (fieldName) => {
+    return errors.map((error, index) => {
+      if (error.path === fieldName) {
+        return (
+          <p key={index} style={{ color: 'red' }}>
+            {error.msg}
+          </p>
+        );
+      }
+      return null;
+    });
   };
 
   return (
@@ -71,6 +89,7 @@ export default function Signup() {
             className="px-1 my-2 w-40"
           />
         </div>
+        {showError('username')}
 
         <div>
           <div>
@@ -87,6 +106,7 @@ export default function Signup() {
             className="px-1 my-2 w-40"
           />
         </div>
+        {showError('password')}
 
         <div>
           <div>
