@@ -1,5 +1,6 @@
 // Libraries
 import React, { useState, useEffect } from 'react';
+import {postData} from '../../util/apiServices'
 
 // Styling
 import { Form, Button } from 'react-bootstrap';
@@ -15,7 +16,11 @@ export default function Login() {
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   };
 
-  const handleSubmit = async () => {};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const login = await postData('/login', formData)
+    console.log("🚀 ~ file: Login.jsx:22 ~ handleSubmit ~ login:", login)
+  };
 
   return (
     <>
