@@ -6,9 +6,9 @@ export default function UserButton({ data, small }) {
   const imgSrc =
   data.photoURL ||
   (data.gender === 'male'
-    ? '/images/boy.png'
+    ? '/images/man.png'
     : data.gender === 'female'
-    ? '/images/girl.png'
+    ? '/images/woman.png'
     : '/images/unknown.png');
 
   const image = (
@@ -20,7 +20,7 @@ export default function UserButton({ data, small }) {
   );
 
   return (
-    <Link to={`/athlete/${data._id}`} className="no-underline text-slate-700">
+    <Link to={`/user/${data._id}`} className="no-underline text-slate-700">
       { data.active ? (
         <div className="h-10 outline-dashed outline-1 outline-pink-300 flex justify-between items-center p-1">
           {data.username}

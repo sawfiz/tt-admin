@@ -78,7 +78,9 @@ export default function Signup() {
     <main>
       <h3 className="mb-4">Signup</h3>
       <Form onSubmit={handleSubmit}>
-        <div className="flex justify-between w-80 items-center">
+
+
+        <div className="flex justify-between w-80 items-center mb-2">
           <div>
             <label>First name</label>
           </div>
@@ -90,13 +92,13 @@ export default function Signup() {
             onChange={handleChange}
             required
             autoComplete="true"
-            className="px-1 mb-2 w-40"
+            className="px-1 w-40"
           />
         </div>
         {showError('first_name')}
 
-        <div className="flex justify-between w-80 items-center">
-          <div>
+        <div className="flex justify-between w-80 items-center mb-2">
+        <div>
             <label>Last name</label>
           </div>
           <input
@@ -107,13 +109,13 @@ export default function Signup() {
             onChange={handleChange}
             required
             autoComplete="true"
-            className="px-1 mb-2 w-40"
+            className="px-1 w-40"
           />
         </div>
         {showError('last_name')}
 
-        <div className="flex justify-between w-80 items-center">
-          <div>
+        <div className="flex justify-between w-80 items-center mb-2">
+        <div>
             <label>Gender</label>
           </div>
           <select
@@ -121,7 +123,7 @@ export default function Signup() {
             value={formData.gender}
             onChange={handleChange}
             required
-            className="p-1 ml-4 mb-2 w-20"
+            className="p-1 ml-4 w-20"
           >
             <option value="">-</option>
             <option value="male">Male</option>
@@ -130,10 +132,44 @@ export default function Signup() {
         </div>
         {showError('gender')}
 
+        <div className="flex justify-between w-80 items-center mb-2">
+        <div>
+            <label>Mobile</label>
+          </div>
+          <input
+            type="text"
+            name="mobile"
+            placeholder="88888888"
+            value={formData.mobile}
+            onChange={handleChange}
+            required
+            autoComplete="true"
+            className="px-1 w-40"
+          />
+        </div>
+        {showError('mobile')}
+
+        <div className="flex justify-between w-80 items-center mb-2">
+        <div>
+            <label>Email</label>
+          </div>
+          <input
+            type="text"
+            name="email"
+            placeholder="usain.bolt@gmail.com"
+            value={formData.email}
+            onChange={handleChange}
+            autoComplete="true"
+            className="px-1 w-52"
+          />
+        </div>
+        {showError('email')}
+
+
         <hr />
 
-        <div className="flex justify-between w-80 items-center">
-          <div>
+        <div className="flex justify-between w-80 items-center mb-2">
+        <div>
             <label>Username</label>
           </div>
           <input
@@ -144,13 +180,13 @@ export default function Signup() {
             onChange={handleChange}
             required
             autoComplete="true"
-            className="px-1 mb-2 w-40"
+            className="px-1 w-40"
           />
         </div>
         {showError('username')}
 
-        <div className="flex justify-between w-80 items-center">
-          <div>
+        <div className="flex justify-between w-80 items-center mb-2">
+        <div>
             <label>New password</label>
           </div>
           <input
@@ -161,13 +197,13 @@ export default function Signup() {
             onChange={handleChange}
             required
             autoComplete="true"
-            className="px-1 mb-2 w-40"
+            className="px-1 w-40"
           />
         </div>
         {showError('password')}
 
-        <div className="flex justify-between w-80 items-center">
-          <div>
+        <div className="flex justify-between w-80 items-center mb-2">
+        <div>
             <label>Re-enter password</label>
           </div>
           <input
@@ -178,7 +214,7 @@ export default function Signup() {
             onChange={handleChange}
             required
             autoComplete="true"
-            className="px-1 mb-2 w-40"
+            className="px-1 w-40"
           />
         </div>
 

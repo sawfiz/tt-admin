@@ -96,9 +96,9 @@ const UserList = () => {
                   type=""
                   onChange={(e) => setSelectedGender(e.target.value)}
                 >
-                  <option value="">Boys & Girls</option>
-                  <option value="male">Boys</option>
-                  <option value="female">Girls</option>
+                  <option value="">Male & Female</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
                 </select>
               </div>
             </div>
