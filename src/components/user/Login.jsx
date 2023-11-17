@@ -1,11 +1,15 @@
 // Libraries
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import {postData} from '../../util/apiServices'
+
+import { AuthContext } from '../../contexts/AuthContext';
 
 // Styling
 import { Form, Button } from 'react-bootstrap';
 
 export default function Login() {
+  const { login } = useContext(AuthContext);
+
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -18,8 +22,12 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const login = await postData('/login', formData)
-    console.log("🚀 ~ file: Login.jsx:22 ~ handleSubmit ~ login:", login)
+    const loggedin = await postData('/login', formData)
+    console.log("🚀 ~ file: Login.jsx:22 ~ handleSubmit ~ login:", loggedin)
+    if (loggedin) {
+      const username = loggedin.user.username;
+      login(username)
+    }
   };
 
   return (

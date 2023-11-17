@@ -4,15 +4,17 @@ import { RouterProvider } from 'react-router-dom';
 // Config
 import router from './routing/Router';
 
+import { AuthProvider } from './contexts/AuthContext';
+
 // Styles
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
-    <div >
+    <AuthProvider>
       <RouterProvider router={router}></RouterProvider>
-    </div>
+    </AuthProvider>
   );
 }
 

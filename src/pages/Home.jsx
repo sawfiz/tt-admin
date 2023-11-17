@@ -1,6 +1,8 @@
 // Libraries
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
+
+import { AuthContext } from '../contexts/AuthContext';
 
 // Components
 import Login from '../components/user/Login';
@@ -9,6 +11,8 @@ import Login from '../components/user/Login';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 
 export default function Home() {
+  const { isLoggedIn, username} = useContext(AuthContext);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
@@ -22,7 +26,7 @@ export default function Home() {
   return (
     <main>
       <p>
-        Welcome, please login or <Link to="/signup">Sign up</Link>
+        {isLoggedIn ? `Welcome ${username}` : <p>Welcome, please login or <Link to="/signup">Sign up</Link></p>}
       </p>
       <Login />
     </main>
