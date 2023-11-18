@@ -7,6 +7,7 @@ import {
 
 // Routing
 import RootLayout from './RootLayout';
+import { ProtectedRoute } from './ProtectedRoute';
 
 // Page components
 import Home from '../pages/Home';
@@ -25,27 +26,28 @@ import UserDetails from '../components/user/UserDetails';
 const routes = createRoutesFromElements(
   <Route path="/" element={<RootLayout />}>
     <Route index element={<Home />} />
-
-
-    <Route path="/admin" element={<Admin />} />
-    <Route path="/login" element={<Login />} />
-    <Route path="/logout" element={<Logout />} />
-
-    <Route path="/manage-athletes" element={<ManageAthletes />} />
-
-    {/*Create a new athlete */}
-    <Route path="/athlete/new" element={<AthleteForm title="Create" />} />
-    {/* Update an exiting athlete */}
-    <Route
-      path="/athlete/update/:id"
-      element={<AthleteForm title="Update" />}
-    />
-    {/* Display athlete detales */}
-    <Route path="/athlete/:id" element={<AthleteDetails />} />
-
     <Route path="/signup" element={<Signup />} />
-    <Route path="/manage-users" element={<ManageUsers />} />
-    <Route path="/user/:id" element={<UserDetails />} />
+    <Route path="/login" element={<Login />} />
+
+    <Route element={<ProtectedRoute />}>
+      <Route path="/admin" element={<Admin />} />
+      <Route path="/logout" element={<Logout />} />
+
+      <Route path="/manage-athletes" element={<ManageAthletes />} />
+
+      {/*Create a new athlete */}
+      <Route path="/athlete/new" element={<AthleteForm title="Create" />} />
+      {/* Update an exiting athlete */}
+      <Route
+        path="/athlete/update/:id"
+        element={<AthleteForm title="Update" />}
+      />
+      {/* Display athlete detales */}
+      <Route path="/athlete/:id" element={<AthleteDetails />} />
+
+      <Route path="/manage-users" element={<ManageUsers />} />
+      <Route path="/user/:id" element={<UserDetails />} />
+    </Route>
   </Route>
 );
 
