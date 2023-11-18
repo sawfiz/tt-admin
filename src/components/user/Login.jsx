@@ -27,8 +27,13 @@ export default function Login() {
     const loggedin = await postData('/login', formData);
     console.log('🚀 ~ file: Login.jsx:22 ~ handleSubmit ~ login:', loggedin);
     if (loggedin) {
+      // Set isLoggedIn and the user's name in the AuthContext
       const name = loggedin.user.name;
       login(name);
+      // Save the JWT token in localStorage
+      const token = loggedin.token;
+      console.log("🚀 ~ file: Login.jsx:35 ~ handleSubmit ~ token:", token)
+      localStorage.setItem('token', token);
       navigate('/');
     }
   };

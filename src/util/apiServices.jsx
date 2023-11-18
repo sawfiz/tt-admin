@@ -10,7 +10,20 @@ export const getData = async (
   try {
     if (setLoading) setLoading(true);
 
-    const response = await fetch(`${BASE_URL}/${endpoint}`);
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+
+    // Retrieve the token from localStorage
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`; // Set the JWT token in the headers
+    }
+
+    const response = await fetch(`${BASE_URL}/${endpoint}`, {
+      headers: headers,
+    });
     const result = await response.json();
     // Check for a specific data key
     const data = dataKey ? result[dataKey] : result;
@@ -48,7 +61,8 @@ export const postData = async (endpoint, data) => {
     }
     // response is OK, i.e., in 200-299, return success message
     return result;
-  } catch (error) { // General errors outside HTTP status codes
+  } catch (error) {
+    // General errors outside HTTP status codes
     console.error('Error POST data:', error);
     throw new Error('Failed to POST data.');
   }
@@ -78,7 +92,8 @@ export const putData = async (endpoint, data) => {
     }
     // response is OK, i.e., in 200-299, return success message
     return result;
-  } catch (error) { // General errors outside HTTP status codes
+  } catch (error) {
+    // General errors outside HTTP status codes
     console.error('Error POST data:', error);
     throw new Error('Failed to POST data.');
   }
