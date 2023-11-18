@@ -20,12 +20,9 @@ export default function Header() {
         <Container>
           <NavbarBrand>Admin Frontend</NavbarBrand>
           <Nav className="me-auto">
-            {/* <Nav.Link href="/">Home</Nav.Link> */}
-            <Link to="/">Home</Link>
-            {/* <Nav.Link href="/admin">Admin</Nav.Link> */}
-            <Link to="/admin">Admin</Link>
-            {/* <Nav.Link href="/logout">Logout</Nav.Link> */}
-            <Link to="/logout">Logout</Link>
+            <Nav.Link as={Link} to="/">Home</Nav.Link>
+            <Nav.Link as={Link} to="/admin">Admin</Nav.Link>
+            <Nav.Link as={Link} to="/logout">Logout</Nav.Link>
           </Nav>
         </Container>
       </Navbar>
