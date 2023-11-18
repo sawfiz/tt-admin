@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../../contexts/AuthContext';
 
-import { getData } from '../../util/apiServices';
+import { httpGET } from '../../util/apiServices';
 
 import { Button } from 'react-bootstrap';
 
@@ -13,7 +13,7 @@ export default function Logout() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const loggedout = await getData('logout');
+    const loggedout = await httpGET('logout');
     if (loggedout.message==='success') {
       console.log('🚀 ~ file: Logout.jsx:11 ~ handleSubmit ~ logout:', loggedout.message);
       logout();

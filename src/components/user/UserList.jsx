@@ -9,7 +9,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 
 // Utilities
-import { getData } from '../../util/apiServices';
+import { httpGET } from '../../util/apiServices';
 
 const UserList = () => {
   const [data, setData] = useState([]);
@@ -41,16 +41,16 @@ const UserList = () => {
       console.log("🚀 ~ file: AthleteList.jsx:41 ~ updateData ~ newData:", newData)
     };
 
-    const getDataFromAPI = async () => {
+    const fetchData = async () => {
       try {
-        await getData('api/users', updateData, setLoading, 'user_list');
+        await httpGET('api/users', updateData, setLoading, 'user_list');
         // 'athlete_list' is the specific key for the data in the response
       } catch (error) {
         // Handle error if needed
       }
     };
 
-    getDataFromAPI();
+    fetchData();
   }, []);
 
   // Render the Athlete components

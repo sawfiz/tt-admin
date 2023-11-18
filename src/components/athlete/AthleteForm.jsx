@@ -1,7 +1,7 @@
 // Libraries
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getData, postData, putData } from '../../util/apiServices';
+import { httpGET, postData, putData } from '../../util/apiServices';
 import { format } from 'date-fns';
 
 // Styling
@@ -35,16 +35,16 @@ const AthleteForm = ({ title }) => {
       setFormData(newData); // Function to update 'data' state
     };
 
-    const getDataFromAPI = async () => {
+    const fetchData = async () => {
       try {
-        await getData(`api/athletes/${id}`, updateData, setLoading, 'athlete');
+        await httpGET(`api/athletes/${id}`, updateData, setLoading, 'athlete');
         // 'athlete' is the specific key for the data in the response
       } catch (error) {
         // Handle error if needed
       }
     };
 
-    if (id) getDataFromAPI(); // Only fetch data if id is in the route
+    if (id) fetchData(); // Only fetch data if id is in the route
   }, [id]); // Include id as it is used in the useEffect
 
   const handleChange = (event) => {

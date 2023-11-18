@@ -1,7 +1,7 @@
 // Vite handles .env differently from create-react-app
 const BASE_URL = import.meta.env.VITE_BASE_URL; // Set the base URL
 
-export const getData = async (
+export const httpGET = async (
   endpoint,
   setData,
   setLoading,

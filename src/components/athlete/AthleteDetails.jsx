@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
-import { getData, deleteData } from '../../util/apiServices';
+import { httpGET, deleteData } from '../../util/apiServices';
 
 // Styling
 import { Button, Modal } from 'react-bootstrap';
@@ -26,16 +26,16 @@ export default function AthleteDetails() {
       );
     };
 
-    const getDataFromAPI = async () => {
+    const fetchData = async () => {
       try {
-        await getData(`api/athletes/${id}`, updateData, setLoading, 'athlete');
+        await httpGET(`api/athletes/${id}`, updateData, setLoading, 'athlete');
         // 'athlete' is the specific key for the data in the response
       } catch (error) {
         // Handle error if needed
       }
     };
 
-    getDataFromAPI();
+    fetchData();
   }, [id]); // Include id as it is used in the useEffect
 
   const imgSrc =
