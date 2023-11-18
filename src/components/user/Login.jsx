@@ -1,6 +1,7 @@
 // Libraries
 import React, { useState, useContext } from 'react';
-import {postData} from '../../util/apiServices'
+import { postData } from '../../util/apiServices';
+import { useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../../contexts/AuthContext';
 
@@ -8,6 +9,7 @@ import { AuthContext } from '../../contexts/AuthContext';
 import { Form, Button } from 'react-bootstrap';
 
 export default function Login() {
+  const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
   const [formData, setFormData] = useState({
@@ -22,16 +24,17 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const loggedin = await postData('/login', formData)
-    console.log("🚀 ~ file: Login.jsx:22 ~ handleSubmit ~ login:", loggedin)
+    const loggedin = await postData('/login', formData);
+    console.log('🚀 ~ file: Login.jsx:22 ~ handleSubmit ~ login:', loggedin);
     if (loggedin) {
       const name = loggedin.user.name;
-      login(name)
+      login(name);
+      navigate('/');
     }
   };
 
   return (
-    <>
+    <main>
       <Form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -40,7 +43,7 @@ export default function Login() {
           value={formData.username}
           onChange={handleChange}
           required
-          autoComplete='true'
+          autoComplete="true"
           className="px-1 mr-2 w-32"
         />
 
@@ -51,7 +54,7 @@ export default function Login() {
           value={formData.password}
           onChange={handleChange}
           required
-          autoComplete='true'
+          autoComplete="true"
           className="px-1 w-32 mr-2"
         />
 
@@ -59,7 +62,6 @@ export default function Login() {
           Login
         </Button>
       </Form>
-      <hr />
-    </>
+    </main>
   );
 }

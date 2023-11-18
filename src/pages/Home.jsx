@@ -30,9 +30,8 @@ export default function Home() {
       ) : (
         <>
           <p>
-            Welcome, please login or <Link to="/signup">Sign up</Link>
+            Welcome, visitor.
           </p>
-          <Login />
         </>
       )}
     </main>

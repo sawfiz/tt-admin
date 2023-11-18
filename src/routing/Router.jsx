@@ -12,6 +12,7 @@ import RootLayout from './RootLayout';
 import Home from '../pages/Home';
 import Signup from '../components/user/Signup';
 import Admin from '../pages/Admin';
+import Login from '../components/user/Login';
 import Logout from '../components/user/Logout';
 
 import ManageAthletes from '../components/athlete/ManageAthletes';
@@ -27,6 +28,7 @@ const routes = createRoutesFromElements(
 
 
     <Route path="/admin" element={<Admin />} />
+    <Route path="/login" element={<Login />} />
     <Route path="/logout" element={<Logout />} />
 
     <Route path="/manage-athletes" element={<ManageAthletes />} />
