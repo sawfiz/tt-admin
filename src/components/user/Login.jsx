@@ -25,8 +25,8 @@ export default function Login() {
     const loggedin = await postData('/login', formData)
     console.log("🚀 ~ file: Login.jsx:22 ~ handleSubmit ~ login:", loggedin)
     if (loggedin) {
-      const username = loggedin.user.username;
-      login(username)
+      const name = loggedin.user.name;
+      login(name)
     }
   };
 

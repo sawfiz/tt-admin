@@ -11,7 +11,7 @@ import Login from '../components/user/Login';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 
 export default function Home() {
-  const { isLoggedIn, username} = useContext(AuthContext);
+  const { isLoggedIn, name } = useContext(AuthContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,10 +25,16 @@ export default function Home() {
 
   return (
     <main>
-      <p>
-        {isLoggedIn ? `Welcome ${username}` : <p>Welcome, please login or <Link to="/signup">Sign up</Link></p>}
-      </p>
-      <Login />
+      {isLoggedIn ? (
+        <p>Welcome {name}</p>
+      ) : (
+        <>
+          <p>
+            Welcome, please login or <Link to="/signup">Sign up</Link>
+          </p>
+          <Login />
+        </>
+      )}
     </main>
   );
 }

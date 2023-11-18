@@ -8,17 +8,18 @@ export const getData = async (
   dataKey = null
 ) => {
   try {
-    setLoading(true);
+    if (setLoading) setLoading(true);
 
     const response = await fetch(`${BASE_URL}/${endpoint}`);
     const result = await response.json();
     // Check for a specific data key
     const data = dataKey ? result[dataKey] : result;
-    setData(data);
-    setLoading(false);
+    if (setData) setData(data);
+    if (setLoading) setLoading(false);
+    return data;
   } catch (error) {
     console.error('Error fetching data:', error);
-    setLoading(false);
+    if (setLoading) setLoading(false);
     throw error; // Re-throw the error for handling in components if needed
   }
 };

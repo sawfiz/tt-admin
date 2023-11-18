@@ -1,4 +1,5 @@
 // Libraries
+import { Link } from 'react-router-dom';
 
 // Config
 
@@ -17,11 +18,14 @@ export default function Header() {
     <div>
       <Navbar bg="dark" data-bs-theme="dark">
         <Container>
-          <NavbarBrand>Track Trackers</NavbarBrand>
+          <NavbarBrand>Admin Frontend</NavbarBrand>
           <Nav className="me-auto">
-            <Nav.Link href="/">Home</Nav.Link>
-            <Nav.Link href="/admin">Admin</Nav.Link>
-            <Nav.Link href="#logout">Logout</Nav.Link>
+            {/* <Nav.Link href="/">Home</Nav.Link> */}
+            <Link to="/">Home</Link>
+            {/* <Nav.Link href="/admin">Admin</Nav.Link> */}
+            <Link to="/admin">Admin</Link>
+            {/* <Nav.Link href="/logout">Logout</Nav.Link> */}
+            <Link to="/logout">Logout</Link>
           </Nav>
         </Container>
       </Navbar>
