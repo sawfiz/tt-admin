@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 // Contexts
 import { AuthContext } from '../../contexts/AuthContext';
-import { useModal, TokenExpiredModal } from '../../contexts/ModalContext';
+import { useModal, InfoModal } from '../../contexts/ModalContext';
 
 // Components
 import AthleteButton from './AthleteButton';
@@ -68,9 +68,8 @@ const AthleteList = () => {
 
         // Handle errors and show modals
         if (response && response.name === 'TokenExpiredError') {
-          console.log("🚀 ~ file: AthleteList.jsx:67 ~ fetchData ~ response:", response)
           showModal(
-            <TokenExpiredModal
+            <InfoModal
               show={true}
               handleClose={closeModal}
               title="Token Expired"
@@ -80,8 +79,16 @@ const AthleteList = () => {
           );
         }
       } catch (error) {
-        // Handle error if needed
-        console.log('Error fetching data');
+        // Handle error and show modal
+        showModal(
+          <InfoModal
+            show={true}
+            handleClose={closeModal}
+            title="Connection Error"
+            body="Error connecting to the server.  Please contact support."
+            primaryAction={closeModal}
+          />
+        );
       }
     };
 
@@ -102,6 +109,7 @@ const AthleteList = () => {
       navigate('/');
     }
   }
+
 
   return (
     <div>

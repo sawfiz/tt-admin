@@ -52,8 +52,9 @@ export const httpGET = async (
     console.error('Error fetching data:', error);
     if (setLoading) setLoading(false);
     if (setErrorMsg)
-      setErrorMsg('Server connection issue, please contact support.');
-    throw error; // Re-throw the error for handling in components if needed
+      setErrorMsg('Error connecting to the server.  Please contact support.');
+    return null;
+      throw error; // Re-throw the error for handling in components if needed
   }
 };
 

@@ -3,7 +3,9 @@ import React, { useState, useContext } from 'react';
 import { postData } from '../../util/apiServices';
 import { useNavigate } from 'react-router-dom';
 
+// Contexts
 import { AuthContext } from '../../contexts/AuthContext';
+import { useModal, InfoModal } from '../../contexts/ModalContext';
 
 // Styling
 import { Form, Button } from 'react-bootstrap';
@@ -11,6 +13,7 @@ import { Form, Button } from 'react-bootstrap';
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+  const { showModal, closeModal } = useModal();
 
   const [formData, setFormData] = useState({
     username: '',
@@ -32,9 +35,20 @@ export default function Login() {
       login(name);
       // Save the JWT token in localStorage
       const token = loggedin.token;
-      console.log("🚀 ~ file: Login.jsx:35 ~ handleSubmit ~ token:", token)
+      console.log('🚀 ~ file: Login.jsx:35 ~ handleSubmit ~ token:', token);
       localStorage.setItem('token', token);
       navigate('/');
+    } else {
+      // Handle error and show modal
+      showModal(
+        <InfoModal
+          show={true}
+          handleClose={closeModal}
+          title="Connection Error"
+          body="Error connecting to the server.  Please contact support."
+          primaryAction={closeModal}
+        />
+      );
     }
   };
 

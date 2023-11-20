@@ -24,8 +24,9 @@ export const ModalProvider = ({ children }) => {
   );
 };
 
-// Reusable modal component
- export const TokenExpiredModal = ({ show, handleClose, title, body, primaryAction }) => {
+// Reusable modal component used for providing info or alter error
+// User is only provided a OK button
+ export const InfoModal = ({ show, handleClose, title, body, primaryAction }) => {
   return (
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
