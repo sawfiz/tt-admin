@@ -9,6 +9,9 @@ import { useModal, InfoModal } from '../../contexts/ModalContext';
 // Components
 import AthleteButton from './AthleteButton';
 
+// Utils
+// import { handleLogout } from '../../util/handleLogout';
+
 // Styling
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -56,39 +59,39 @@ const AthleteList = () => {
     };
 
     const fetchData = async () => {
-      try {
-        // 'athlete_list' is the specific key for the data in the response
-        const response = await httpGET(
-          'api/athletes',
-          updateData,
-          setLoading,
-          setErrorMsg,
-          'athlete_list'
-        );
+      // 'athlete_list' is the specific key for the data in the response
+      const response = await httpGET(
+        'api/athletes',
+        updateData,
+        setLoading,
+        'athlete_list'
+      );
 
-        // Handle errors and show modals
-        if (response && response.name === 'TokenExpiredError') {
+      // Handle errors and show modals
+      if (response.error) {
+        if (response.error === 'TokenExpiredError') {
           showModal(
             <InfoModal
               show={true}
               handleClose={closeModal}
               title="Token Expired"
-              body="Your session has expired. Pleae login again."
+              body={response.errorMsg}
               primaryAction={handleLogout}
             />
           );
+        } else {
+          // Other errors, eg. connection, server down, or DB down
+          setErrorMsg(`${response.error.message}.  ${response.errorMsg}`);
+          showModal(
+            <InfoModal
+              show={true}
+              handleClose={closeModal}
+              title={response.error.message}
+              body={response.errorMsg}
+              primaryAction={closeModal}
+            />
+          );
         }
-      } catch (error) {
-        // Handle error and show modal
-        showModal(
-          <InfoModal
-            show={true}
-            handleClose={closeModal}
-            title="Connection Error"
-            body="Error connecting to the server.  Please contact support."
-            primaryAction={closeModal}
-          />
-        );
       }
     };
 
@@ -100,23 +103,26 @@ const AthleteList = () => {
     <AthleteButton key={athlete._id} data={athlete} small={true} />
   ));
 
-  const handleLogout = async () =>{
+  // Logout if token expired
+  const handleLogout = async () => {
     const loggedout = await httpGET('logout');
-    if (loggedout.message==='success') {
-      console.log('🚀 ~ file: Logout.jsx:11 ~ handleSubmit ~ logout:', loggedout.message);
+    if (loggedout.message === 'success') {
+      console.log(
+        '🚀 ~ file: Logout.jsx:11 ~ handleSubmit ~ logout:',
+        loggedout.message
+      );
       closeModal();
       logout();
-      navigate('/');
+      navigate('/login');
     }
-  }
-
+  };
 
   return (
     <div>
       {loading ? (
         <p>Loading...</p>
       ) : errorMsg ? (
-        <p>{errorMsg}</p>
+        <p className="text-danger">{errorMsg}</p>
       ) : (
         <div>
           <h3>Athletes</h3>

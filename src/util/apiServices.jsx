@@ -5,7 +5,6 @@ export const httpGET = async (
   endpoint, // API endpoint
   setData, // For setting `data` state variable
   setLoading, // For setting `loading` state variable
-  setErrorMsg, // For setting `errorMsg` state variable
   dataKey = null // For getting specific data
 ) => {
   try {
@@ -30,14 +29,17 @@ export const httpGET = async (
 
     if (!response.ok) {
       if (response.status === 403) {
-        if (result.name === 'TokenExpiredError') {
-          if (setErrorMsg) setErrorMsg('Token expired, try log in again.');
-        } else {
-          if (setErrorMsg) setErrorMsg(`API call forbidden, ${result.name}`);
-        }
         if (setLoading) setLoading(false);
         if (setData) setData([]);
-        return result;
+        return {
+          error: result.name,
+          errorMsg: 'Your session has expired. Pleae login again.',
+        };
+      } else {
+        return {
+          error: result.name,
+          errorMsg: 'Error fetching data.  Please try again.',
+        };
       }
     }
 
@@ -49,12 +51,11 @@ export const httpGET = async (
     if (setLoading) setLoading(false);
     return data;
   } catch (error) {
-    console.error('Error fetching data:', error);
     if (setLoading) setLoading(false);
-    if (setErrorMsg)
-      setErrorMsg('Error connecting to the server.  Please contact support.');
-    return null;
-      throw error; // Re-throw the error for handling in components if needed
+    return {
+      error,
+      errorMsg: 'Pleaes contact support.',
+    };
   }
 };
 
