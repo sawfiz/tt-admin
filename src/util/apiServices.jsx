@@ -2,37 +2,57 @@
 const BASE_URL = import.meta.env.VITE_BASE_URL; // Set the base URL
 
 export const httpGET = async (
-  endpoint,
-  setData,
-  setLoading,
-  dataKey = null
+  endpoint, // API endpoint
+  setData, // For setting `data` state variable
+  setLoading, // For setting `loading` state variable
+  setErrorMsg, // For setting `errorMsg` state variable
+  dataKey = null // For getting specific data
 ) => {
   try {
+    // Allow the calling component to display e.g.,"Loading..."
     if (setLoading) setLoading(true);
 
+    // Construct the GET request headers
     const headers = {
       'Content-Type': 'application/json',
     };
-
-    // Retrieve the token from localStorage
+    // Set the JWT token in the headers with token saved in the localStorage
     const token = localStorage.getItem('token');
-
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`; // Set the JWT token in the headers
+      headers['Authorization'] = `Bearer ${token}`;
     }
 
+    // The GET API call
     const response = await fetch(`${BASE_URL}/${endpoint}`, {
       headers: headers,
     });
     const result = await response.json();
+
+    if (!response.ok) {
+      if (response.status === 403) {
+        if (result.name === 'TokenExpiredError') {
+          if (setErrorMsg) setErrorMsg('Token expired, try log in again.');
+        } else {
+          if (setErrorMsg) setErrorMsg(`API call forbidden, ${result.name}`);
+        }
+        if (setLoading) setLoading(false);
+        if (setData) setData([]);
+        return result;
+      }
+    }
+
     // Check for a specific data key
     const data = dataKey ? result[dataKey] : result;
     if (setData) setData(data);
+
+    // Allow the calling component to stop displaying, e.g. "Loading"
     if (setLoading) setLoading(false);
     return data;
   } catch (error) {
     console.error('Error fetching data:', error);
     if (setLoading) setLoading(false);
+    if (setErrorMsg)
+      setErrorMsg('Server connection issue, please contact support.');
     throw error; // Re-throw the error for handling in components if needed
   }
 };

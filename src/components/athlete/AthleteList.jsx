@@ -1,6 +1,9 @@
 // AthleteList.js
 import { useState, useEffect } from 'react';
 
+// Contexts
+import { useModal, CustomModal } from '../../contexts/ModalContext';
+
 // Components
 import AthleteButton from './AthleteButton';
 
@@ -12,8 +15,11 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { httpGET } from '../../util/apiServices';
 
 const AthleteList = () => {
+  const { showModal, closeModal } = useModal();
+
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   const [activeOnly, setActiveOnly] = useState(true);
   const [selectedGender, setSelectedGender] = useState(null);
@@ -38,15 +44,40 @@ const AthleteList = () => {
   useEffect(() => {
     const updateData = (newData) => {
       setData(newData); // Function to update 'data' state
-      console.log("🚀 ~ file: AthleteList.jsx:41 ~ updateData ~ newData:", newData)
+      console.log(
+        '🚀 ~ file: AthleteList.jsx:48 ~ updateData ~ newData:',
+        newData
+      );
     };
 
     const fetchData = async () => {
       try {
-        await httpGET('api/athletes', updateData, setLoading, 'athlete_list');
         // 'athlete_list' is the specific key for the data in the response
+        const response = await httpGET(
+          'api/athletes',
+          updateData,
+          setLoading,
+          setErrorMsg,
+          'athlete_list'
+        );
+        console.log("🚀 ~ file: AthleteList.jsx:63 ~ fetchData ~ response:", response)
+
+        // Handle errors and show modals
+        if (response && response.name === 'tokenExpired') {
+          console.log("🚀 ~ file: AthleteList.jsx:67 ~ fetchData ~ response:", response)
+          showModal(
+            <CustomModal
+              show={true}
+              handleClose={closeModal}
+              title="Token Expired"
+              body="Your session has expired. Do you want to log out?"
+              primaryAction={handleLogout}
+            />
+          );
+        }
       } catch (error) {
         // Handle error if needed
+        console.log('Error fetching data');
       }
     };
 
@@ -58,57 +89,59 @@ const AthleteList = () => {
     <AthleteButton key={athlete._id} data={athlete} small={true} />
   ));
 
+  const handleLogout = () =>{}
+
   return (
     <div>
       {loading ? (
         <p>Loading...</p>
+      ) : errorMsg ? (
+        <p>{errorMsg}</p>
       ) : (
-        data && (
-          <div>
-            <h3>Athletes</h3>
+        <div>
+          <h3>Athletes</h3>
 
-            {/* Search athlete based on name */}
-            <InputGroup className="mb-3">
-              <InputGroup.Text>🔍</InputGroup.Text>
-              <Form.Control
-                autoFocus
-                placeholder="Name"
-                value={searchText}
-                onChange={handleSearch}
-              />
-            </InputGroup>
+          {/* Search athlete based on name */}
+          <InputGroup className="mb-3">
+            <InputGroup.Text>🔍</InputGroup.Text>
+            <Form.Control
+              autoFocus
+              placeholder="Name"
+              value={searchText}
+              onChange={handleSearch}
+            />
+          </InputGroup>
 
-            {/* Active and gender filters */}
-            <div className="flex justify-around items-center my-3">
-              {/* Checkbox for active athletes only */}
-              <div>
-                <input
-                  type="checkbox"
-                  checked={activeOnly}
-                  onChange={(e) => setActiveOnly(e.target.checked)}
-                />{' '}
-                <span className="text-slate-800">Active only </span>
-              </div>
-
-              {/* Filter athletes based on gender */}
-              <div>
-                <select
-                  type=""
-                  onChange={(e) => setSelectedGender(e.target.value)}
-                >
-                  <option value="">Boys & Girls</option>
-                  <option value="male">Boys</option>
-                  <option value="female">Girls</option>
-                </select>
-              </div>
+          {/* Active and gender filters */}
+          <div className="flex justify-around items-center my-3">
+            {/* Checkbox for active athletes only */}
+            <div>
+              <input
+                type="checkbox"
+                checked={activeOnly}
+                onChange={(e) => setActiveOnly(e.target.checked)}
+              />{' '}
+              <span className="text-slate-800">Active only </span>
             </div>
 
-            {/* Filtered athlete list */}
-            <div className="grid grid-cols-2 gap-[10px] md:grid-cols-3 lg:grid-cols-4 mb-4">
-              {athleteButtons}
+            {/* Filter athletes based on gender */}
+            <div>
+              <select
+                type=""
+                onChange={(e) => setSelectedGender(e.target.value)}
+              >
+                <option value="">Boys & Girls</option>
+                <option value="male">Boys</option>
+                <option value="female">Girls</option>
+              </select>
             </div>
           </div>
-        )
+
+          {/* Filtered athlete list */}
+          <div className="grid grid-cols-2 gap-[10px] md:grid-cols-3 lg:grid-cols-4 mb-4">
+            {athleteButtons}
+          </div>
+        </div>
       )}
     </div>
   );
