@@ -25,9 +25,26 @@ export const ModalProvider = ({ children }) => {
 };
 
 // Reusable modal component
-export const CustomModal = ({ show, handleClose, title, body, primaryAction }) => {
+ export const TokenExpiredModal = ({ show, handleClose, title, body, primaryAction }) => {
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>{title}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>{body}</Modal.Body>
+      <Modal.Footer>
+        <Button variant="primary" onClick={primaryAction}>
+          OK
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
+// Reusable modal component
+ export const CustomModal = ({ show, handleClose, title, body, primaryAction }) => {
+  return (
+    <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>

@@ -1,8 +1,10 @@
 // AthleteList.js
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Contexts
-import { useModal, CustomModal } from '../../contexts/ModalContext';
+import { AuthContext } from '../../contexts/AuthContext';
+import { useModal, TokenExpiredModal } from '../../contexts/ModalContext';
 
 // Components
 import AthleteButton from './AthleteButton';
@@ -10,11 +12,14 @@ import AthleteButton from './AthleteButton';
 // Styling
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
+import { Modal, Button } from 'react-bootstrap';
 
 // Utilities
 import { httpGET } from '../../util/apiServices';
 
 const AthleteList = () => {
+  const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
   const { showModal, closeModal } = useModal();
 
   const [data, setData] = useState([]);
@@ -60,17 +65,16 @@ const AthleteList = () => {
           setErrorMsg,
           'athlete_list'
         );
-        console.log("🚀 ~ file: AthleteList.jsx:63 ~ fetchData ~ response:", response)
 
         // Handle errors and show modals
-        if (response && response.name === 'tokenExpired') {
+        if (response && response.name === 'TokenExpiredError') {
           console.log("🚀 ~ file: AthleteList.jsx:67 ~ fetchData ~ response:", response)
           showModal(
-            <CustomModal
+            <TokenExpiredModal
               show={true}
               handleClose={closeModal}
               title="Token Expired"
-              body="Your session has expired. Do you want to log out?"
+              body="Your session has expired. Pleae login again."
               primaryAction={handleLogout}
             />
           );
@@ -89,7 +93,15 @@ const AthleteList = () => {
     <AthleteButton key={athlete._id} data={athlete} small={true} />
   ));
 
-  const handleLogout = () =>{}
+  const handleLogout = async () =>{
+    const loggedout = await httpGET('logout');
+    if (loggedout.message==='success') {
+      console.log('🚀 ~ file: Logout.jsx:11 ~ handleSubmit ~ logout:', loggedout.message);
+      closeModal();
+      logout();
+      navigate('/');
+    }
+  }
 
   return (
     <div>
