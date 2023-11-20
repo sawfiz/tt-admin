@@ -2,6 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
+// Contexts
+import { useModal, InfoModal } from '../../contexts/ModalContext';
+
 // Utilities
 import { postData } from '../../util/apiServices';
 
@@ -10,7 +13,9 @@ import { Form, Button } from 'react-bootstrap';
 
 export default function Signup() {
   const navigate = useNavigate();
+  const { showModal, closeModal } = useModal();
 
+  const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     username: '',
     password1: '',
@@ -32,30 +37,34 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
     const { password1, password2 } = formData;
     setMatch(password1 === password2);
 
     if (password1 === password2) {
-      try {
-        const createUser = await postData('/api/users', formData);
+      const createUser = await postData('/api/users', formData, setLoading);
 
-        // TODO: need to deal with 500, MongoDB is down
-        if (createUser.errors) {
-          // Handle backend validation errors
-          const errors = createUser.errors.errors.map((err) => ({
-            path: err.path,
-            msg: err.msg,
-          }));
-          setErrors(errors);
-        } else {
-          // Handle success, reset form, or navigate to a different page
-          console.log('User created successfully:', createUser);
-          navigate('/');
-        }
-      } catch (error) {
-        // General errors
-        // Handle error state or show an error message to the user
+      if (createUser.errors) {
+        // Handle validation errors
+        const errors = createUser.errors.errors.map((err) => ({
+          path: err.path,
+          msg: err.msg,
+        }));
+        setErrors(errors);
+      } else if (createUser.error) {
+        // Handle backend validation errors
+        showModal(
+          <InfoModal
+            show={true}
+            handleClose={closeModal}
+            title={createUser.error}
+            body={createUser.errorMsg}
+            primaryAction={closeModal}
+          />
+        );
+      } else {
+        // Handle success, reset form, or navigate to a different page
+        console.log('User created successfully:', createUser);
+        navigate('/');
       }
     }
   };
@@ -78,8 +87,6 @@ export default function Signup() {
     <main>
       <h3 className="mb-4">Signup</h3>
       <Form onSubmit={handleSubmit}>
-
-
         <div className="flex justify-between w-80 items-center mb-2">
           <div>
             <label>First name</label>
@@ -98,7 +105,7 @@ export default function Signup() {
         {showError('first_name')}
 
         <div className="flex justify-between w-80 items-center mb-2">
-        <div>
+          <div>
             <label>Last name</label>
           </div>
           <input
@@ -115,7 +122,7 @@ export default function Signup() {
         {showError('last_name')}
 
         <div className="flex justify-between w-80 items-center mb-2">
-        <div>
+          <div>
             <label>Gender</label>
           </div>
           <select
@@ -133,7 +140,7 @@ export default function Signup() {
         {showError('gender')}
 
         <div className="flex justify-between w-80 items-center mb-2">
-        <div>
+          <div>
             <label>Mobile</label>
           </div>
           <input
@@ -150,7 +157,7 @@ export default function Signup() {
         {showError('mobile')}
 
         <div className="flex justify-between w-80 items-center mb-2">
-        <div>
+          <div>
             <label>Email</label>
           </div>
           <input
@@ -165,11 +172,10 @@ export default function Signup() {
         </div>
         {showError('email')}
 
-
         <hr />
 
         <div className="flex justify-between w-80 items-center mb-2">
-        <div>
+          <div>
             <label>Username</label>
           </div>
           <input
@@ -186,7 +192,7 @@ export default function Signup() {
         {showError('username')}
 
         <div className="flex justify-between w-80 items-center mb-2">
-        <div>
+          <div>
             <label>New password</label>
           </div>
           <input
@@ -203,7 +209,7 @@ export default function Signup() {
         {showError('password')}
 
         <div className="flex justify-between w-80 items-center mb-2">
-        <div>
+          <div>
             <label>Re-enter password</label>
           </div>
           <input
@@ -224,6 +230,7 @@ export default function Signup() {
           Submit
         </Button>
       </Form>
+      {loading && (<p>Submitting...</p>)}
     </main>
   );
 }

@@ -42,7 +42,6 @@ export const httpGET = async (
       }
 
       if (response.status === 500) {
-        console.log('I am here!');
         return {
           error: result.error,
           errorMsg: 'Error fetching data.  Please contact support.',
@@ -80,17 +79,25 @@ export const postData = async (endpoint, data, setLoading) => {
     if (setLoading) setLoading(false);
 
     const result = await response.json();
-    console.log("🚀 ~ file: apiServices.jsx:83 ~ postData ~ result:", result)
     // Check if status on successful (outside 200-299)
     if (!response.ok) {
-      // Check if backend validation failed, 400
-      if (response.status === 401) {
+      // Handle validation errors
+      if (response.status === 400) {
+        return { errors:result.errors};
+      }
+
+      // Handle username in use error
+      if (response.status === 409) {
         return {error:result.error, errorMsg: "Please try again."};
       }
+
+      // Handle database connection error
       if (response.status === 500) {
         return {error:result.error, errorMsg: "Please constact support."};
       }
+
       // Other errors
+      console.log(result);
       throw new Error('Failed to POST data.');
     }
     // response is OK, i.e., in 200-299, return success message
