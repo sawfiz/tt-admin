@@ -64,8 +64,12 @@ export const httpGET = async (
   }
 };
 
-export const postData = async (endpoint, data) => {
+export const postData = async (endpoint, data, setLoading) => {
   try {
+
+    // Allow the calling component to display e.g.,"Loading..."
+    if (setLoading) setLoading(true);
+
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'POST',
       headers: {
@@ -73,15 +77,18 @@ export const postData = async (endpoint, data) => {
       },
       body: JSON.stringify(data),
     });
+    if (setLoading) setLoading(false);
 
     const result = await response.json();
+    console.log("🚀 ~ file: apiServices.jsx:83 ~ postData ~ result:", result)
     // Check if status on successful (outside 200-299)
     if (!response.ok) {
       // Check if backend validation failed, 400
-      if (response.status === 400) {
-        // throw new Error(JSON.stringify(result.errors));
-        // return with error messages
-        return result;
+      if (response.status === 401) {
+        return {error:result.error, errorMsg: "Please try again."};
+      }
+      if (response.status === 500) {
+        return {error:result.error, errorMsg: "Please constact support."};
       }
       // Other errors
       throw new Error('Failed to POST data.');

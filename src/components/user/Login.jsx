@@ -15,6 +15,7 @@ export default function Login() {
   const { login } = useContext(AuthContext);
   const { showModal, closeModal } = useModal();
 
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -27,15 +28,14 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const loggedin = await postData('/login', formData);
-    console.log('🚀 ~ file: Login.jsx:22 ~ handleSubmit ~ login:', loggedin);
-    if (loggedin) {
+    const loggedin = await postData('/login', formData, setLoading);
+    
+    if (!loggedin.error) {
       // Set isLoggedIn and the user's name in the AuthContext
       const name = loggedin.user.name;
       login(name);
       // Save the JWT token in localStorage
       const token = loggedin.token;
-      console.log('🚀 ~ file: Login.jsx:35 ~ handleSubmit ~ token:', token);
       localStorage.setItem('token', token);
       navigate('/');
     } else {
@@ -44,8 +44,8 @@ export default function Login() {
         <InfoModal
           show={true}
           handleClose={closeModal}
-          title="Connection Error"
-          body="Error connecting to the server.  Please contact support."
+          title={loggedin.error}
+          body={loggedin.errorMsg}
           primaryAction={closeModal}
         />
       );
@@ -81,6 +81,7 @@ export default function Login() {
           Login
         </Button>
       </Form>
+      {loading && <p>Authenticating user...</p>}
     </main>
   );
 }
