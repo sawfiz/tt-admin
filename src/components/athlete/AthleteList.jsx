@@ -66,9 +66,18 @@ const AthleteList = () => {
         setLoading,
         'athlete_list'
       );
+      console.log(
+        '🚀 ~ file: AthleteList.jsx:69 ~ fetchData ~ response:',
+        response
+      );
 
       // Handle errors and show modals
       if (response.error) {
+        console.log(
+          '🚀 ~ file: AthleteList.jsx:72 ~ fetchData ~ response.error:',
+          response.error
+        );
+        // Token expired error, log user out
         if (response.error === 'TokenExpiredError') {
           showModal(
             <InfoModal
@@ -80,17 +89,30 @@ const AthleteList = () => {
             />
           );
         } else {
-          // Other errors, eg. connection, server down, or DB down
-          setErrorMsg(`${response.error.message}.  ${response.errorMsg}`);
-          showModal(
-            <InfoModal
-              show={true}
-              handleClose={closeModal}
-              title={response.error.message}
-              body={response.errorMsg}
-              primaryAction={closeModal}
-            />
-          );
+          if (response.error === 'Database error') {
+            // Database error, ask user to contact support
+            setErrorMsg(`${response.error}.  ${response.errorMsg}`);
+            showModal(
+              <InfoModal
+                show={true}
+                handleClose={closeModal}
+                title={response.error}
+                body={response.errorMsg}
+                primaryAction={closeModal}
+              />
+            );
+          } else {
+            // Other errors, ask user to contact support
+            setErrorMsg(`${response.error.message}.  ${response.errorMsg}`);
+            showModal(
+              <InfoModal
+                show={true}
+                handleClose={closeModal}
+                title={response.error.message}
+                primaryAction={closeModal}
+              />
+            );
+          }
         }
       }
     };

@@ -26,19 +26,26 @@ export const httpGET = async (
       headers: headers,
     });
     const result = await response.json();
+    console.log(response.status);
+    console.log('🚀 ~ file: apiServices.jsx:29 ~ result:', result);
+    // Allow the calling component to stop displaying, e.g. "Loading"
+    if (setLoading) setLoading(false);
 
     if (!response.ok) {
+      if (setData) setData([]);
+
       if (response.status === 403) {
-        if (setLoading) setLoading(false);
-        if (setData) setData([]);
         return {
           error: result.name,
           errorMsg: 'Your session has expired. Pleae login again.',
         };
-      } else {
+      }
+
+      if (response.status === 500) {
+        console.log('I am here!');
         return {
-          error: result.name,
-          errorMsg: 'Error fetching data.  Please try again.',
+          error: result.error,
+          errorMsg: 'Error fetching data.  Please contact support.',
         };
       }
     }
@@ -47,8 +54,6 @@ export const httpGET = async (
     const data = dataKey ? result[dataKey] : result;
     if (setData) setData(data);
 
-    // Allow the calling component to stop displaying, e.g. "Loading"
-    if (setLoading) setLoading(false);
     return data;
   } catch (error) {
     if (setLoading) setLoading(false);
