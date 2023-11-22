@@ -24,22 +24,25 @@ export const httpGET = async (
     console.log('🚀 ~ file: apiServices.jsx:29 ~ result:', result);
 
     if (!response.ok) {
-      // No valid data received, set Data to []
-
       // Throw errors
       if (result.status === 403) {
         throw {
-          error: result.error,
-          errorMsg: 'Your session has expired. Pleae login again.',
+          name: result.error,
+          message: 'Your session has expired. Pleae login again.',
         };
       }
 
       if (result.status === 500) {
         throw {
-          error: 'Database error',
-          errorMsg: 'Error fetching data.  Please contact support.',
+          name: 'Database error',
+          message: 'Error fetching data.  Please contact support.',
         };
       }
+
+      throw {
+        name: result.error,
+        message: 'Other errors',
+      };
     }
     // Check for a specific data key
     const data = dataKey ? result[dataKey] : result;
@@ -49,13 +52,13 @@ export const httpGET = async (
     // return what was thrown in try
     return {
       error: error.name,
-      errorMsg: error.errorMsg, // error contains the message already
+      errorMsg: error.message, // error contains the message already
     };
     // }
   }
 };
 
-export const postData = async (endpoint, data, setLoading) => {
+export const httpPOST = async (endpoint, data, setLoading) => {
   try {
     // Allow the calling component to display e.g.,"Loading..."
     if (setLoading) setLoading(true);

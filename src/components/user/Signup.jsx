@@ -6,7 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useModal, InfoModal } from '../../contexts/ModalContext';
 
 // Utilities
-import { postData } from '../../utils/apiServices';
+import { httpPOST } from '../../utils/apiServices';
 
 // Styling
 import { Form, Button } from 'react-bootstrap';
@@ -41,7 +41,7 @@ export default function Signup() {
     setMatch(password1 === password2);
 
     if (password1 === password2) {
-      const createUser = await postData('/api/users', formData, setLoading);
+      const createUser = await httpPOST('/api/users', formData, setLoading);
 
       if (createUser.errors) {
         // Handle validation errors

@@ -1,7 +1,7 @@
 // Libraries
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { httpGET, postData, putData } from '../../utils/apiServices';
+import { httpGET, httpPOST, putData } from '../../utils/apiServices';
 import { format } from 'date-fns';
 
 // Styling
@@ -88,7 +88,7 @@ const AthleteForm = ({ title }) => {
       // Logic for creating a new athlete
       console.log('Perform POST request:', formData);
       try {
-        const createAthlete = await postData('/api/athletes', formData);
+        const createAthlete = await httpPOST('/api/athletes', formData);
         if (createAthlete.errors) {
           // Handle backend validation errors
           const errors = createAthlete.errors.errors.map((err) => ({

@@ -18,7 +18,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { Modal, Button } from 'react-bootstrap';
 
 // Utilities
-import { httpGET } from '../../utils/apiServices';
+import { httpGET, httpPOST } from '../../utils/apiServices';
 
 const AthleteList = () => {
   const navigate = useNavigate();
@@ -72,30 +72,17 @@ const AthleteList = () => {
             />
           );
         } else {
-          if (response.error === 'Database error') {
-            // Database error, ask user to contact support
-            setErrorMsg(`${response.error}.  ${response.errorMsg}`);
-            showModal(
-              <InfoModal
-                show={true}
-                handleClose={closeModal}
-                title={response.error}
-                body={response.errorMsg}
-                primaryAction={closeModal}
-              />
-            );
-          } else {
-            // Other errors, ask user to contact support
-            setErrorMsg(`${response.error.message}.  ${response.errorMsg}`);
-            showModal(
-              <InfoModal
-                show={true}
-                handleClose={closeModal}
-                title={response.error.message}
-                primaryAction={closeModal}
-              />
-            );
-          }
+          // Other errors, ask user to contact support
+          setErrorMsg(`${response.error}.  ${response.errorMsg}`);
+          showModal(
+            <InfoModal
+              show={true}
+              handleClose={closeModal}
+              title={response.error}
+              body={response.errorMsg}
+              primaryAction={closeModal}
+            />
+          );
         }
       } else setData(response);
     };
@@ -111,7 +98,7 @@ const AthleteList = () => {
 
   // Logout if token expired
   const handleLogout = async () => {
-    const loggedout = await httpGET('logout');
+    const loggedout = await httpPOST('logout');
     if (loggedout.message === 'success') {
       console.log(
         '🚀 ~ file: Logout.jsx:11 ~ handleSubmit ~ logout:',
