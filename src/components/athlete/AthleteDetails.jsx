@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
-import { httpGET, deleteData } from '../../util/apiServices';
+import { httpGET, deleteData } from '../../utils/apiServices';
 
 // Styling
 import { Button, Modal } from 'react-bootstrap';

@@ -6,7 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useModal, InfoModal } from '../../contexts/ModalContext';
 
 // Utilities
-import { postData } from '../../util/apiServices';
+import { postData } from '../../utils/apiServices';
 
 // Styling
 import { Form, Button } from 'react-bootstrap';

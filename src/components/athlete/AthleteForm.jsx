@@ -1,7 +1,7 @@
 // Libraries
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { httpGET, postData, putData } from '../../util/apiServices';
+import { httpGET, postData, putData } from '../../utils/apiServices';
 import { format } from 'date-fns';
 
 // Styling
@@ -181,8 +181,11 @@ const AthleteForm = ({ title }) => {
           <Form.Control
             type="date"
             name="birthdate"
-            value={formData.birthdate ? format(new Date(formData.birthdate), 'yyyy-MM-dd') :
-            format(new Date(), 'yyyy-MM-dd')}
+            value={
+              formData.birthdate
+                ? format(new Date(formData.birthdate), 'yyyy-MM-dd')
+                : format(new Date(), 'yyyy-MM-dd')
+            }
             onChange={handleChange}
             required
           />

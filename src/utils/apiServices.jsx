@@ -3,14 +3,9 @@ const BASE_URL = import.meta.env.VITE_BASE_URL; // Set the base URL
 
 export const httpGET = async (
   endpoint, // API endpoint
-  setData, // For setting `data` state variable
-  setLoading, // For setting `loading` state variable
   dataKey = null // For getting specific data
 ) => {
   try {
-    // Allow the calling component to display e.g.,"Loading..."
-    if (setLoading) setLoading(true);
-
     // Construct the GET request headers
     const headers = {
       'Content-Type': 'application/json',
@@ -26,46 +21,42 @@ export const httpGET = async (
       headers: headers,
     });
     const result = await response.json();
-    console.log(response.status);
     console.log('🚀 ~ file: apiServices.jsx:29 ~ result:', result);
-    // Allow the calling component to stop displaying, e.g. "Loading"
-    if (setLoading) setLoading(false);
 
     if (!response.ok) {
-      if (setData) setData([]);
+      // No valid data received, set Data to []
 
-      if (response.status === 403) {
-        return {
-          error: result.name,
+      // Throw errors
+      if (result.status === 403) {
+        throw {
+          error: result.error,
           errorMsg: 'Your session has expired. Pleae login again.',
         };
       }
 
-      if (response.status === 500) {
-        return {
-          error: result.error,
+      if (result.status === 500) {
+        throw {
+          error: 'Database error',
           errorMsg: 'Error fetching data.  Please contact support.',
         };
       }
     }
-
     // Check for a specific data key
     const data = dataKey ? result[dataKey] : result;
-    if (setData) setData(data);
-
     return data;
   } catch (error) {
-    if (setLoading) setLoading(false);
+    console.log('🚀 ~ file: apiServices.jsx:58 ~ error:', error);
+    // return what was thrown in try
     return {
-      error,
-      errorMsg: 'Pleaes contact support.',
+      error: error.name,
+      errorMsg: error.errorMsg, // error contains the message already
     };
+    // }
   }
 };
 
 export const postData = async (endpoint, data, setLoading) => {
   try {
-
     // Allow the calling component to display e.g.,"Loading..."
     if (setLoading) setLoading(true);
 
@@ -83,17 +74,17 @@ export const postData = async (endpoint, data, setLoading) => {
     if (!response.ok) {
       // Handle validation errors
       if (response.status === 400) {
-        return { errors:result.errors};
+        return { errors: result.errors };
       }
 
       // Handle username in use error
       if (response.status === 409) {
-        return {error:result.error, errorMsg: "Please try again."};
+        return { error: result.error, errorMsg: 'Please try again.' };
       }
 
       // Handle database connection error
       if (response.status === 500) {
-        return {error:result.error, errorMsg: "Please constact support."};
+        return { error: result.error, errorMsg: 'Please constact support.' };
       }
 
       // Other errors
@@ -104,8 +95,8 @@ export const postData = async (endpoint, data, setLoading) => {
     return result;
   } catch (error) {
     // General errors outside HTTP status codes
-    console.error('Error POST data:', error);
-    throw new Error('Failed to POST data.');
+    if (setLoading) setLoading(false);
+    return { error: 'Connection failed', errorMsg: 'Please constact support.' };
   }
 };
 

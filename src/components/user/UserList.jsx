@@ -9,7 +9,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 
 // Utilities
-import { httpGET } from '../../util/apiServices';
+import { httpGET } from '../../utils/apiServices';
 
 const UserList = () => {
   const [data, setData] = useState([]);
@@ -38,7 +38,10 @@ const UserList = () => {
   useEffect(() => {
     const updateData = (newData) => {
       setData(newData); // Function to update 'data' state
-      console.log("🚀 ~ file: AthleteList.jsx:41 ~ updateData ~ newData:", newData)
+      console.log(
+        '🚀 ~ file: AthleteList.jsx:41 ~ updateData ~ newData:',
+        newData
+      );
     };
 
     const fetchData = async () => {

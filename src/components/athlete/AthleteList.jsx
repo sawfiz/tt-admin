@@ -18,7 +18,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { Modal, Button } from 'react-bootstrap';
 
 // Utilities
-import { httpGET } from '../../util/apiServices';
+import { httpGET } from '../../utils/apiServices';
 
 const AthleteList = () => {
   const navigate = useNavigate();
@@ -50,22 +50,9 @@ const AthleteList = () => {
   });
 
   useEffect(() => {
-    const updateData = (newData) => {
-      setData(newData); // Function to update 'data' state
-      console.log(
-        '🚀 ~ file: AthleteList.jsx:48 ~ updateData ~ newData:',
-        newData
-      );
-    };
-
     const fetchData = async () => {
       // 'athlete_list' is the specific key for the data in the response
-      const response = await httpGET(
-        'api/athletes',
-        updateData,
-        setLoading,
-        'athlete_list'
-      );
+      const response = await httpGET('api/athletes', 'athlete_list');
       console.log(
         '🚀 ~ file: AthleteList.jsx:69 ~ fetchData ~ response:',
         response
@@ -73,10 +60,6 @@ const AthleteList = () => {
 
       // Handle errors and show modals
       if (response.error) {
-        console.log(
-          '🚀 ~ file: AthleteList.jsx:72 ~ fetchData ~ response.error:',
-          response.error
-        );
         // Token expired error, log user out
         if (response.error === 'TokenExpiredError') {
           showModal(
@@ -114,10 +97,11 @@ const AthleteList = () => {
             );
           }
         }
-      }
+      } else setData(response);
     };
 
     fetchData();
+    setLoading(false);
   }, []);
 
   // Render the Athlete components

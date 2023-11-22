@@ -1,6 +1,6 @@
 // Libraries
 import React, { useState, useContext } from 'react';
-import { postData } from '../../util/apiServices';
+import { postData } from '../../utils/apiServices';
 import { useNavigate } from 'react-router-dom';
 
 // Contexts
@@ -29,7 +29,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const loggedin = await postData('/login', formData, setLoading);
-    
+
     if (!loggedin.error) {
       // Set isLoggedIn and the user's name in the AuthContext
       const name = loggedin.user.name;

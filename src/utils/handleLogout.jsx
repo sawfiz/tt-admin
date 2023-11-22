@@ -7,7 +7,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import { useModal } from '../contexts/ModalContext';
 
 // Utilities
-import { httpGET } from './apiServices';
+import { httpPOST } from './apiServices';
 
 export const handleLogout = async () =>{
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export const handleLogout = async () =>{
 
   try {
 
-    const loggedout = await httpGET('logout');
+    const loggedout = await httpPOST('logout');
     if (loggedout.message==='success') {
       console.log('🚀 ~ file: Logout.jsx:11 ~ handleSubmit ~ logout:', loggedout.message);
       closeModal();

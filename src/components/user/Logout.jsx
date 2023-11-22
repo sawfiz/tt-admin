@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import { useModal, InfoModal } from '../../contexts/ModalContext';
 
-import { httpGET } from '../../util/apiServices';
+import { httpGET } from '../../utils/apiServices';
 
 import { Button } from 'react-bootstrap';
 
