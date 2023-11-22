@@ -27,12 +27,7 @@ export default function UserDetails() {
     };
 
     const fetchData = async () => {
-      try {
-        await httpGET(`api/users/${id}`, updateData, setLoading, 'user');
-        // 'user' is the specific key for the data in the response
-      } catch (error) {
-        // Handle error if needed
-      }
+        const response = await httpGET(`api/users/${id}`, updateData, setLoading, 'user');
     };
 
     fetchData();

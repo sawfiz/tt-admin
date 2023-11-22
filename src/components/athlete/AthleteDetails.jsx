@@ -1,10 +1,15 @@
 // Libraries
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
-import { httpGET, deleteData } from '../../utils/apiServices';
+// Contexts
+import { AuthContext } from '../../contexts/AuthContext';
+import { useModal, InfoModal } from '../../contexts/ModalContext';
+
+// Utilities
+import { httpGET, httpPOST, deleteData } from '../../utils/apiServices';
 
 // Styling
 import { Button, Modal } from 'react-bootstrap';
@@ -12,31 +17,65 @@ import { Button, Modal } from 'react-bootstrap';
 export default function AthleteDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
+  const { showModal, closeModal } = useModal();
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
-    const updateData = (newData) => {
-      setData(newData); // Function to update 'data' state
-      console.log(
-        '🚀 ~ file: AthleteDetails.jsx:23 ~ updateData ~ newData:',
-        newData
-      );
-    };
-
     const fetchData = async () => {
-      try {
-        await httpGET(`api/athletes/${id}`, updateData, setLoading, 'athlete');
-        // 'athlete' is the specific key for the data in the response
-      } catch (error) {
-        // Handle error if needed
-      }
+      const response = await httpGET(
+        `api/athletes/${id}`,
+        'athlete'
+      );
+      if (response.error) {
+        // Token expired error, log user out
+        if (response.error === 'TokenExpiredError') {
+          showDeleteModal(
+            <InfoModal
+              show={true}
+              handleClose={closeModal}
+              title="Token Expired"
+              body={response.errorMsg}
+              primaryAction={handleLogout}
+            />
+          );
+        } else {
+          // Other errors, ask user to contact support
+          setErrorMsg(`${response.error}.  ${response.errorMsg}`);
+          showDeleteModal(
+            <InfoModal
+              show={true}
+              handleClose={closeModal}
+              title={response.error}
+              body={response.errorMsg}
+              primaryAction={closeModal}
+            />
+          );
+        }
+      } else setData(response);
     };
 
     fetchData();
+    setLoading(false);
   }, [id]); // Include id as it is used in the useEffect
+
+  // Logout if token expired
+  const handleLogout = async () => {
+    const loggedout = await httpPOST('logout');
+    if (loggedout.message === 'success') {
+      console.log(
+        '🚀 ~ file: Logout.jsx:11 ~ handleSubmit ~ logout:',
+        loggedout.message
+      );
+      closeModal();
+      logout();
+      navigate('/login');
+    }
+  };
 
   const imgSrc =
     data.photoURL ||
@@ -47,13 +86,13 @@ export default function AthleteDetails() {
       : '/images/unknown.png');
 
   // Function to open the delete confirmation modal
-  const handleShowModal = () => {
-    setShowModal(true);
+  const handleshowDeleteModal = () => {
+    setShowDeleteModal(true);
   };
 
   // Function to close the delete confirmation modal
   const handleCloseModal = () => {
-    setShowModal(false);
+    setShowDeleteModal(false);
   };
 
   const handleDelete = async () => {
@@ -122,7 +161,7 @@ export default function AthleteDetails() {
                 <Link to={`/athlete/update/${id}`}>
                   <Button variant="primary">Update</Button>
                 </Link>
-                <Button variant="danger" onClick={handleShowModal}>
+                <Button variant="danger" onClick={handleshowDeleteModal}>
                   Delete
                 </Button>
               </div>
@@ -132,7 +171,7 @@ export default function AthleteDetails() {
       </div>
 
       {/* Delete confirmation modal */}
-      <Modal show={showModal} onHide={handleCloseModal} centered>
+      <Modal show={showDeleteModal} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Deletion</Modal.Title>
         </Modal.Header>

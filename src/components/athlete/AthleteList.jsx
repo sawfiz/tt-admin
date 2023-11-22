@@ -9,16 +9,12 @@ import { useModal, InfoModal } from '../../contexts/ModalContext';
 // Components
 import AthleteButton from './AthleteButton';
 
-// Utils
-// import { handleLogout } from '../../util/handleLogout';
+// Utilities
+import { httpGET, httpPOST } from '../../utils/apiServices';
 
 // Styling
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import { Modal, Button } from 'react-bootstrap';
-
-// Utilities
-import { httpGET, httpPOST } from '../../utils/apiServices';
 
 const AthleteList = () => {
   const navigate = useNavigate();
@@ -53,10 +49,6 @@ const AthleteList = () => {
     const fetchData = async () => {
       // 'athlete_list' is the specific key for the data in the response
       const response = await httpGET('api/athletes', 'athlete_list');
-      console.log(
-        '🚀 ~ file: AthleteList.jsx:69 ~ fetchData ~ response:',
-        response
-      );
 
       // Handle errors and show modals
       if (response.error) {
@@ -99,15 +91,21 @@ const AthleteList = () => {
   // Logout if token expired
   const handleLogout = async () => {
     const loggedout = await httpPOST('logout');
-    if (loggedout.message === 'success') {
-      console.log(
-        '🚀 ~ file: Logout.jsx:11 ~ handleSubmit ~ logout:',
-        loggedout.message
+    if (!loggedout) {
+      // Handle error and show modal
+      showModal(
+        <InfoModal
+          show={true}
+          handleClose={closeModal}
+          title="Connection Error"
+          body="Error connecting to the server.  Please contact support."
+          primaryAction={closeModal}
+        />
       );
-      closeModal();
-      logout();
-      navigate('/login');
     }
+    closeModal();
+    logout();
+    navigate('/login');
   };
 
   return (
