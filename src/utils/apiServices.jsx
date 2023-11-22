@@ -58,11 +58,8 @@ export const httpGET = async (
   }
 };
 
-export const httpPOST = async (endpoint, data, setLoading) => {
+export const httpPOST = async (endpoint, data) => {
   try {
-    // Allow the calling component to display e.g.,"Loading..."
-    if (setLoading) setLoading(true);
-
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'POST',
       headers: {
@@ -70,7 +67,6 @@ export const httpPOST = async (endpoint, data, setLoading) => {
       },
       body: JSON.stringify(data),
     });
-    if (setLoading) setLoading(false);
 
     const result = await response.json();
     // Check if status on successful (outside 200-299)
@@ -98,7 +94,6 @@ export const httpPOST = async (endpoint, data, setLoading) => {
     return result;
   } catch (error) {
     // General errors outside HTTP status codes
-    if (setLoading) setLoading(false);
     return { error: 'Connection failed', errorMsg: 'Please constact support.' };
   }
 };

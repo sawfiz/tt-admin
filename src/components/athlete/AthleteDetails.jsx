@@ -20,7 +20,7 @@ export default function AthleteDetails() {
   const { logout } = useContext(AuthContext);
   const { showModal, closeModal } = useModal();
 
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -34,7 +34,7 @@ export default function AthleteDetails() {
       if (response.error) {
         // Token expired error, log user out
         if (response.error === 'TokenExpiredError') {
-          showDeleteModal(
+          showModal(
             <InfoModal
               show={true}
               handleClose={closeModal}
@@ -46,7 +46,7 @@ export default function AthleteDetails() {
         } else {
           // Other errors, ask user to contact support
           setErrorMsg(`${response.error}.  ${response.errorMsg}`);
-          showDeleteModal(
+          showModal(
             <InfoModal
               show={true}
               handleClose={closeModal}
@@ -77,13 +77,13 @@ export default function AthleteDetails() {
     }
   };
 
-  const imgSrc =
+  const imgSrc = data ?
     data.photoURL ||
     (data.gender === 'male'
       ? '/images/boy.png'
       : data.gender === 'female'
       ? '/images/girl.png'
-      : '/images/unknown.png');
+      : '/images/unknown.png') : null;
 
   // Function to open the delete confirmation modal
   const handleshowDeleteModal = () => {
@@ -119,8 +119,10 @@ export default function AthleteDetails() {
       <div>
         {loading ? (
           <p>Loading...</p>
-        ) : (
-          data && (
+        ) : errorMsg ? (
+          <p className="text-danger">{errorMsg}</p>
+        ) : ( data &&
+           (
             <div>
               {/* Athlete full name */}
               <h2 className="mt-24 font-bold text-xl">{data.name}</h2>

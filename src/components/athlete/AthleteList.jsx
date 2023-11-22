@@ -21,7 +21,7 @@ const AthleteList = () => {
   const { logout } = useContext(AuthContext);
   const { showModal, closeModal } = useModal();
 
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
 
@@ -35,15 +35,17 @@ const AthleteList = () => {
   };
 
   // Filter athletes based on searchText, activeOnly and selectedGender
-  const filteredData = data.filter((athlete) => {
-    const { name, gender, active } = athlete;
+  const filteredData = data
+    ? data.filter((athlete) => {
+        const { name, gender, active } = athlete;
 
-    const nameIncludesText = name.toLowerCase().includes(searchText);
-    const isGenderMatch = !selectedGender || selectedGender === gender;
-    const isActiveMatch = !activeOnly || active === activeOnly;
+        const nameIncludesText = name.toLowerCase().includes(searchText);
+        const isGenderMatch = !selectedGender || selectedGender === gender;
+        const isActiveMatch = !activeOnly || active === activeOnly;
 
-    return nameIncludesText && isGenderMatch && isActiveMatch;
-  });
+        return nameIncludesText && isGenderMatch && isActiveMatch;
+      })
+    : null;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,9 +86,11 @@ const AthleteList = () => {
   }, []);
 
   // Render the Athlete components
-  const athleteButtons = filteredData.map((athlete) => (
-    <AthleteButton key={athlete._id} data={athlete} small={true} />
-  ));
+  const athleteButtons = filteredData
+    ? filteredData.map((athlete) => (
+        <AthleteButton key={athlete._id} data={athlete} small={true} />
+      ))
+    : null;
 
   // Logout if token expired
   const handleLogout = async () => {
@@ -115,50 +119,52 @@ const AthleteList = () => {
       ) : errorMsg ? (
         <p className="text-danger">{errorMsg}</p>
       ) : (
-        <div>
-          <h3>Athletes</h3>
+        data && (
+          <div>
+            <h3>Athletes</h3>
 
-          {/* Search athlete based on name */}
-          <InputGroup className="mb-3">
-            <InputGroup.Text>🔍</InputGroup.Text>
-            <Form.Control
-              autoFocus
-              placeholder="Name"
-              value={searchText}
-              onChange={handleSearch}
-            />
-          </InputGroup>
+            {/* Search athlete based on name */}
+            <InputGroup className="mb-3">
+              <InputGroup.Text>🔍</InputGroup.Text>
+              <Form.Control
+                autoFocus
+                placeholder="Name"
+                value={searchText}
+                onChange={handleSearch}
+              />
+            </InputGroup>
 
-          {/* Active and gender filters */}
-          <div className="flex justify-around items-center my-3">
-            {/* Checkbox for active athletes only */}
-            <div>
-              <input
-                type="checkbox"
-                checked={activeOnly}
-                onChange={(e) => setActiveOnly(e.target.checked)}
-              />{' '}
-              <span className="text-slate-800">Active only </span>
+            {/* Active and gender filters */}
+            <div className="flex justify-around items-center my-3">
+              {/* Checkbox for active athletes only */}
+              <div>
+                <input
+                  type="checkbox"
+                  checked={activeOnly}
+                  onChange={(e) => setActiveOnly(e.target.checked)}
+                />{' '}
+                <span className="text-slate-800">Active only </span>
+              </div>
+
+              {/* Filter athletes based on gender */}
+              <div>
+                <select
+                  type=""
+                  onChange={(e) => setSelectedGender(e.target.value)}
+                >
+                  <option value="">Boys & Girls</option>
+                  <option value="male">Boys</option>
+                  <option value="female">Girls</option>
+                </select>
+              </div>
             </div>
 
-            {/* Filter athletes based on gender */}
-            <div>
-              <select
-                type=""
-                onChange={(e) => setSelectedGender(e.target.value)}
-              >
-                <option value="">Boys & Girls</option>
-                <option value="male">Boys</option>
-                <option value="female">Girls</option>
-              </select>
+            {/* Filtered athlete list */}
+            <div className="grid grid-cols-2 gap-[10px] md:grid-cols-3 lg:grid-cols-4 mb-4">
+              {athleteButtons}
             </div>
           </div>
-
-          {/* Filtered athlete list */}
-          <div className="grid grid-cols-2 gap-[10px] md:grid-cols-3 lg:grid-cols-4 mb-4">
-            {athleteButtons}
-          </div>
-        </div>
+        )
       )}
     </div>
   );
