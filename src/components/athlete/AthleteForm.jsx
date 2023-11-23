@@ -3,6 +3,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 
+// Contexts
+import { AuthContext } from '../../contexts/AuthContext';
+import { useModal, InfoModal } from '../../contexts/ModalContext';
+
 // Utilities
 import { httpGET, httpPOST, putData } from '../../utils/apiServices';
 
@@ -12,6 +16,8 @@ import { Button, Form, InputGroup } from 'react-bootstrap';
 const AthleteForm = ({ title }) => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
+  const { showModal, closeModal } = useModal();
 
   // State variables
   const [loading, setLoading] = useState(true);
@@ -36,11 +42,35 @@ const AthleteForm = ({ title }) => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await httpGET(`api/athletes/${id}`, 'athlete');
+
+      if (response.error) {
+        // Display the model. If error is token timed out, click on button logs the user out.
+        showModal(
+          <InfoModal
+            show={true}
+            handleClose={closeModal}
+            title={response.error}
+            body={response.message}
+            primaryAction={response.status === 403 ? handleLogout : closeModal}
+          />
+        );
+        setErrorMsg(`${response.error} ${response.errorMsg}`);
+      } else {
+        setFormData(response);
+      }
     };
 
-    if (id) fetchData(); // Only fetch data if id is in the route
+    if (id) fetchData();
     setLoading(false);
   }, [id]); // Include id as it is used in the useEffect
+
+  // Logout if token expired
+  const handleLogout = async () => {
+    await httpPOST('logout');
+    closeModal();
+    logout();
+    navigate('/login');
+  };
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -56,47 +86,66 @@ const AthleteForm = ({ title }) => {
     }));
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     if (id) {
-      // Logic for updating an existing athlete
-      console.log('Perform PUT request:', formData);
-      const updateAthlete = await putData(`/api/athletes/${id}`, formData);
-      if (updateAthlete.validationErrors) {
+      updateAthlete();
+    } else {
+      createAthlete();
+    }
+  };
+
+  const createAthlete = async () => {
+    // Logic for creating a new athlete
+    console.log('Perform POST request:', formData);
+    const response = await httpPOST('/api/athletes', formData);
+    if (response.error) {
+      if (response.status === 400) {
         // Handle backend validation validationErrors
-        const validationErrors =
-          updateAthlete.validationErrors.validationErrors.map((err) => ({
-            path: err.path,
-            msg: err.msg,
-          }));
+        const validationErrors = JSON.parse(response.error).errors.map((err) => ({
+          path: err.path,
+          msg: err.msg,
+        }));
         setValidationErrors(validationErrors);
       } else {
-        // Handle success, reset form, or navigate to a different page
-        console.log('Athlete created successfully:', updateAthlete);
-        navigate(`/athlete/${id}`);
+        // Clear validation errors displayed on page
+        setValidationErrors([]);
+        // Handle other errors
+        // Display the model. If error is token timed out, click on button logs the user out.
+        showModal(
+          <InfoModal
+            show={true}
+            handleClose={closeModal}
+            title={response.error}
+            body={response.message}
+            primaryAction={response.status === 403 ? handleLogout : closeModal}
+          />
+        );
+        setErrorMsg(`${response.error} ${response.errorMsg}`);
       }
     } else {
-      // Logic for creating a new athlete
-      console.log('Perform POST request:', formData);
-      const response = await httpPOST('/api/athletes', formData);
-      if (response.error) {
-        if (response.code === 400) {
-          // Handle backend validation validationErrors
-          const validationErrors = response.errorMsg.map((err) => ({
-            path: err.path,
-            msg: err.msg,
-          }));
-          setValidationErrors(validationErrors);
-        } else {
-          // Clear validation errors displayed on page
-          setValidationErrors([]);
-          // Handle other errors
-        }
-      } else {
-        // Handle success, reset form, or navigate to a different page
-        console.log('Athlete created successfully:', response);
-        navigate('/manage-athletes');
-      }
+      // Handle success, reset form, or navigate to a different page
+      console.log('Athlete created successfully:', response);
+      navigate('/manage-athletes');
+    }
+  };
+
+  const updateAthlete = async () => {
+    // Logic for updating an existing athlete
+    console.log('Perform PUT request:', formData);
+    const updateAthlete = await putData(`/api/athletes/${id}`, formData);
+    if (updateAthlete.validationErrors) {
+      // Handle backend validation validationErrors
+      const validationErrors =
+        updateAthlete.validationErrors.validationErrors.map((err) => ({
+          path: err.path,
+          msg: err.msg,
+        }));
+      setValidationErrors(validationErrors);
+    } else {
+      // Handle success, reset form, or navigate to a different page
+      console.log('Athlete updated successfully:', updateAthlete);
+      navigate(`/athlete/${id}`);
     }
   };
 
