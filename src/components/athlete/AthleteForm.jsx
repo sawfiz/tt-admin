@@ -8,7 +8,7 @@ import { AuthContext } from '../../contexts/AuthContext';
 import { useModal, InfoModal } from '../../contexts/ModalContext';
 
 // Utilities
-import { httpGET, httpPOST, httpPUT } from '../../utils/apiServices';
+import { httpRequest } from '../../utils/apiServices';
 
 // Styling
 import { Button, Form, InputGroup } from 'react-bootstrap';
@@ -41,7 +41,7 @@ const AthleteForm = ({ title }) => {
   // If an id is provided in the route, GET data of the athlete
   useEffect(() => {
     const fetchData = async () => {
-      const response = await httpGET(`api/athletes/${id}`, 'athlete');
+      const response = await httpRequest('GET', `/api/athletes/${id}`, null, 'athlete');
 
       if (response.error) {
         displayErrorModal(response);
@@ -71,7 +71,7 @@ const AthleteForm = ({ title }) => {
 
   // Logout if token expired
   const handleLogout = async () => {
-    await httpPOST('logout');
+    await httpRequest('POST', '/logout');
     closeModal();
     logout();
     navigate('/login');
@@ -103,7 +103,7 @@ const AthleteForm = ({ title }) => {
   const createAthlete = async () => {
     // Logic for creating a new athlete
     console.log('Perform POST request:', formData);
-    const response = await httpPOST('/api/athletes', formData);
+    const response = await httpRequest('POST', '/api/athletes', formData);
     if (response.error) {
       handleFormErrors(response);
     } else {
@@ -116,7 +116,7 @@ const AthleteForm = ({ title }) => {
   const updateAthlete = async () => {
     // Logic for updating an existing athlete
     console.log('Perform PUT request:', formData);
-    const response = await httpPUT(`/api/athletes/${id}`, formData);
+    const response = await httpRequest('PUT', `/api/athletes/${id}`, formData);
     if (response.error) {
       handleFormErrors(response);
     } else {

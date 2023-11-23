@@ -10,7 +10,7 @@ import { AuthContext } from '../../contexts/AuthContext';
 import { useModal, InfoModal } from '../../contexts/ModalContext';
 
 // Utilities
-import { httpGET, httpPOST } from '../../utils/apiServices';
+import { httpRequest } from '../../utils/apiServices';
 
 // Styling
 import Form from 'react-bootstrap/Form';
@@ -31,8 +31,12 @@ const AthleteList = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // 'athlete_list' is the specific key for the data in the response
-      const response = await httpGET('api/athletes', 'athlete_list');
+      const response = await httpRequest(
+        'GET',
+        '/api/athletes',
+        null,
+        'athlete_list'
+      );
 
       if (response.error) {
         // Display the model. If error is token timed out, click on button logs the user out.
@@ -57,7 +61,7 @@ const AthleteList = () => {
 
   // Logout if token expired
   const handleLogout = async () => {
-    await httpPOST('logout');
+    await httpRequest('POST', '/logout');
     closeModal();
     logout();
     navigate('/login');

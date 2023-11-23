@@ -9,7 +9,7 @@ import { AuthContext } from '../../contexts/AuthContext';
 import { useModal, InfoModal } from '../../contexts/ModalContext';
 
 // Utilities
-import { httpGET, httpPOST, httpDELETE } from '../../utils/apiServices';
+import { httpRequest } from '../../utils/apiServices';
 
 // Styling
 import { Button, Modal } from 'react-bootstrap';
@@ -27,7 +27,12 @@ export default function AthleteDetails() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await httpGET(`api/athletes/${id}`, 'athlete');
+      const response = await httpRequest(
+        'GET',
+        `/api/athletes/${id}`,
+        null,
+        'athlete'
+      );
 
       if (response.error) {
         // Display the model. If error is token timed out, click on button logs the user out.
@@ -52,7 +57,7 @@ export default function AthleteDetails() {
 
   // Logout if token expired
   const handleLogout = async () => {
-    await httpPOST('logout');
+    await httpRequest('POST', '/logout');
     closeModal();
     logout();
     navigate('/login');
@@ -80,7 +85,7 @@ export default function AthleteDetails() {
   const handleDelete = async () => {
     try {
       // Send API request to delete the athlete
-      await httpDELETE(`/api/athletes/${id}`);
+      await httpRequest('DELETE', `/api/athletes/${id}`);
       // Redirect or perform any other action upon successful deletion
       navigate('/manage-athletes'); // Redirect to athletes page after deletion
     } catch (error) {

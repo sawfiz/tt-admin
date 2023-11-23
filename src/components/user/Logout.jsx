@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import { useModal, InfoModal } from '../../contexts/ModalContext';
 
-import { httpPOST } from '../../utils/apiServices';
+import { httpRequest } from '../../utils/apiServices';
 
 import { Button } from 'react-bootstrap';
 
@@ -16,7 +16,7 @@ export default function Logout() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const loggedout = await httpPOST('logout');
+    const loggedout = await httpRequest('POST', '/logout');
     if (!loggedout) {
       // Handle error and show modal
       showModal(

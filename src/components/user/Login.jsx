@@ -1,6 +1,6 @@
 // Libraries
 import React, { useState, useContext } from 'react';
-import { httpPOST } from '../../utils/apiServices';
+import { httpRequest } from '../../utils/apiServices';
 import { useNavigate } from 'react-router-dom';
 
 // Contexts
@@ -28,8 +28,8 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await httpPOST('/login', formData, setLoading);
-    console.log("🚀 ~ file: Login.jsx:32 ~ handleSubmit ~ response:", response)
+    const response = await httpRequest('POST', '/login', formData, setLoading);
+    console.log('🚀 ~ file: Login.jsx:32 ~ handleSubmit ~ response:', response);
 
     if (response.error) {
       // Handle error and show modal

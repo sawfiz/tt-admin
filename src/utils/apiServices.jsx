@@ -1,92 +1,36 @@
 // Vite handles .env differently from create-react-app
 const BASE_URL = import.meta.env.VITE_BASE_URL; // Set the base URL
 
-export const httpGET = async (
-  endpoint, // API endpoint
-  dataKey = null // For getting specific data
+export const httpRequest = async (
+  method = 'GET',
+  endpoint,
+  data = null,
+  dataKey = null
 ) => {
   try {
-    // The GET API call
-    const response = await fetch(`${BASE_URL}/${endpoint}`, {
-      headers: constructHeaders(),
-    });
-    const result = await response.json();
+    const url = `${BASE_URL}${endpoint}`;
+    const headers = constructHeaders();
 
-    if (!response.ok) throwError(response, result);
-
-    // Check for a specific data key
-    const data = dataKey ? result[dataKey] : result;
-    return data;
-  } catch (error) {
-    return {
-      status: error.status || 500,
-      error: error.name,
-      message: error.message,
+    const options = {
+      method,
+      headers,
     };
-  }
-};
 
-export const httpPOST = async (endpoint, data) => {
-  try {
-    // the POST API call
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-      method: 'POST',
-      headers: constructHeaders(),
-      body: JSON.stringify(data),
-    });
+    if (method !== 'GET' && data) {
+      options.body = JSON.stringify(data);
+    }
+
+    const response = await fetch(url, options);
 
     const result = await response.json();
-
     if (!response.ok) throwError(response, result);
 
-    return result;
+    if (method === 'GET' && dataKey) {
+      return result[dataKey];
+    } else {
+      return result;
+    }
   } catch (error) {
-    // return what was thrown in try
-    return {
-      status: error.status || 500,
-      error: error.name,
-      message: error.message,
-    };
-  }
-};
-
-export const httpPUT = async (endpoint, data) => {
-  try {
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-      method: 'PUT',
-      headers: constructHeaders(),
-      body: JSON.stringify(data),
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) throwError(response, result);
-
-    return result;
-  } catch (error) {
-    // return what was thrown in try
-    return {
-      status: error.status || 500,
-      error: error.name,
-      message: error.message,
-    };
-  }
-};
-
-export const httpDELETE = async (endpoint) => {
-  try {
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-      method: 'DELETE',
-      headers: constructHeaders(),
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) throwError(response, result);
-
-    return result;
-  } catch (error) {
-    // return what was thrown in try
     return {
       status: error.status || 500,
       error: error.name,
