@@ -27,36 +27,23 @@ export default function AthleteDetails() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await httpGET(
-        `api/athletes/${id}`,
-        'athlete'
-      );
+      const response = await httpGET(`api/athletes/${id}`, 'athlete');
+
       if (response.error) {
-        // Token expired error, log user out
-        if (response.error === 'TokenExpiredError') {
-          showModal(
-            <InfoModal
-              show={true}
-              handleClose={closeModal}
-              title="Token Expired"
-              body={response.errorMsg}
-              primaryAction={handleLogout}
-            />
-          );
-        } else {
-          // Other errors, ask user to contact support
-          setErrorMsg(`${response.error}.  ${response.errorMsg}`);
-          showModal(
-            <InfoModal
-              show={true}
-              handleClose={closeModal}
-              title={response.error}
-              body={response.errorMsg}
-              primaryAction={closeModal}
-            />
-          );
-        }
-      } else setData(response);
+        // Display the model. If error is token timed out, click on button logs the user out.
+        showModal(
+          <InfoModal
+            show={true}
+            handleClose={closeModal}
+            title={response.error}
+            body={response.message}
+            primaryAction={response.status === 403 ? handleLogout : closeModal}
+          />
+        );
+        setErrorMsg(`${response.error} ${response.errorMsg}`);
+      } else {
+        setData(response);
+      }
     };
 
     fetchData();
@@ -65,25 +52,20 @@ export default function AthleteDetails() {
 
   // Logout if token expired
   const handleLogout = async () => {
-    const loggedout = await httpPOST('logout');
-    if (loggedout.message === 'success') {
-      console.log(
-        '🚀 ~ file: Logout.jsx:11 ~ handleSubmit ~ logout:',
-        loggedout.message
-      );
-      closeModal();
-      logout();
-      navigate('/login');
-    }
+    await httpPOST('logout');
+    closeModal();
+    logout();
+    navigate('/login');
   };
 
-  const imgSrc = data ?
-    data.photoURL ||
-    (data.gender === 'male'
-      ? '/images/boy.png'
-      : data.gender === 'female'
-      ? '/images/girl.png'
-      : '/images/unknown.png') : null;
+  const imgSrc = data
+    ? data.photoURL ||
+      (data.gender === 'male'
+        ? '/images/boy.png'
+        : data.gender === 'female'
+        ? '/images/girl.png'
+        : '/images/unknown.png')
+    : null;
 
   // Function to open the delete confirmation modal
   const handleshowDeleteModal = () => {
@@ -121,8 +103,8 @@ export default function AthleteDetails() {
           <p>Loading...</p>
         ) : errorMsg ? (
           <p className="text-danger">{errorMsg}</p>
-        ) : ( data &&
-           (
+        ) : (
+          data && (
             <div>
               {/* Athlete full name */}
               <h2 className="mt-24 font-bold text-xl">{data.name}</h2>
