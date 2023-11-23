@@ -6,35 +6,13 @@ export const httpGET = async (
   dataKey = null // For getting specific data
 ) => {
   try {
-    // Construct the GET request headers
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-    // Set the JWT token in the headers with token saved in the localStorage
-    const token = localStorage.getItem('token');
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
     // The GET API call
     const response = await fetch(`${BASE_URL}/${endpoint}`, {
-      headers,
+      headers: constructHeaders(),
     });
     const result = await response.json();
 
-    // If error, throw erros
-    if (!response.ok) {
-      let message = result.message;
-      if (response.status === 500)
-        message = 'Database error, please contact support.';
-      if (response.status === 403)
-        message = 'Token timed out, please contact support.';
-
-      const error = new Error(message || 'Fail to fetch');
-      error.name = result.error;
-      error.status = response.status;
-      throw error;
-    }
+    if (!response.ok) throwError(response, result);
 
     // Check for a specific data key
     const data = dataKey ? result[dataKey] : result;
@@ -43,79 +21,31 @@ export const httpGET = async (
     return {
       status: error.status || 500,
       error: error.name,
-      message: error.message, 
+      message: error.message,
     };
   }
 };
 
 export const httpPOST = async (endpoint, data) => {
   try {
-    // Construct the GET request headers
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-    // Set the JWT token in the headers with token saved in the localStorage
-    const token = localStorage.getItem('token');
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
+    // the POST API call
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'POST',
-      headers,
+      headers: constructHeaders(),
       body: JSON.stringify(data),
     });
 
     const result = await response.json();
-    console.log('🚀 ~ file: apiServices.jsx:68 ~ httpPOST ~ result:', result);
-    // Check if status on successful (outside 200-299)
-    if (!response.ok) {
-      // Handle validation errors
-      if (response.status === 400)
-        throw {
-          code: response.status,
-          name: 'Validation errors',
-          // Pass the validation errors array in message
-          message: JSON.parse(result.error).errors,
-        };
 
-      // Handle username in use error
-      if (response.status === 409)
-        throw {
-          code: response.status,
-          name: result.error,
-          message: 'Uername already in use.',
-        };
+    if (!response.ok) throwError(response, result);
 
-      if (result.status === 403)
-        throw {
-          code: response.status,
-          name: result.error,
-          message: 'Your session has expired. Pleae login again.',
-        };
-
-      if (result.status === 500)
-        throw {
-          code: response.status,
-          name: 'Database error',
-          message: 'Error fetching data.  Please contact support.',
-        };
-
-      throw {
-        code: response.status,
-        name: result.error,
-        message: 'Other errors',
-      };
-    }
-    // response is OK, i.e., in 200-299, return success message
     return result;
   } catch (error) {
-    console.log('🚀 ~ file: apiServices.jsx:58 ~ error:', error);
     // return what was thrown in try
     return {
-      code: error.code,
+      status: error.status || 500,
       error: error.name,
-      errorMsg: error.message,
+      message: error.message,
     };
   }
 };
@@ -179,4 +109,36 @@ export const deleteData = async (endpoint) => {
     console.error('Error DELETE data:', error);
     throw new Error('Failed to DELETE data.');
   }
+};
+
+const constructHeaders = () => {
+  // Construct the GET request headers
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+  // Set the JWT token in the headers with token saved in the localStorage
+  const token = localStorage.getItem('token');
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  return headers;
+};
+
+const throwError = (response, result) => {
+  console.log("🚀 ~ file: apiServices.jsx:131 ~ throwError ~ result:", result)
+  let message = result.message;
+  if (response.status === 400) message = JSON.parse(result.error).errors;
+  if (response.status === 409) message = 'Uername already in use.';
+  if (response.status === 500)
+    message = 'Server error, please contact support.';
+  if (response.status === 401)
+    message = 'Please check your username and password.';
+  if (response.status === 403)
+    message = 'Token timed out, please contact support.';
+
+  const error = new Error(message || 'Failed to POST data.');
+  error.name = result.error;
+  error.status = response.status;
+  throw error;
 };

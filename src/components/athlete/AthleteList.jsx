@@ -57,15 +57,7 @@ const AthleteList = () => {
 
   // Logout if token expired
   const handleLogout = async () => {
-    const loggedout = await httpPOST('logout');
-    if (!loggedout) {
-      // Handle error and show modal
-      showModal(
-        'Connection Error',
-        'Error connecting to the server.  Please contact support.',
-        closeModal
-      );
-    }
+    await httpPOST('logout');
     closeModal();
     logout();
     navigate('/login');

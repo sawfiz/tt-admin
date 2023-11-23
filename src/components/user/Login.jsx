@@ -28,27 +28,28 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const loggedin = await httpPOST('/login', formData, setLoading);
+    const response = await httpPOST('/login', formData, setLoading);
+    console.log("🚀 ~ file: Login.jsx:32 ~ handleSubmit ~ response:", response)
 
-    if (!loggedin.error) {
-      // Set isLoggedIn and the user's name in the AuthContext
-      const name = loggedin.user.name;
-      login(name);
-      // Save the JWT token in localStorage
-      const token = loggedin.token;
-      localStorage.setItem('token', token);
-      navigate('/');
-    } else {
+    if (response.error) {
       // Handle error and show modal
       showModal(
         <InfoModal
           show={true}
           handleClose={closeModal}
-          title={loggedin.error}
-          body={loggedin.errorMsg}
+          title={response.error}
+          body={response.message}
           primaryAction={closeModal}
         />
       );
+    } else {
+      // Set response and the user's name in the AuthContext
+      const name = response.user.name;
+      login(name);
+      // Save the JWT token in localStorage
+      const token = response.token;
+      localStorage.setItem('token', token);
+      navigate('/');
     }
   };
 
