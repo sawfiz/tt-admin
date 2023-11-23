@@ -1,8 +1,14 @@
 // Libraries
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { httpGET, httpPOST, putData } from '../../utils/apiServices';
 import { format } from 'date-fns';
+
+// Contexts
+import { AuthContext } from '../../contexts/AuthContext';
+import { useModal, InfoModal } from '../../contexts/ModalContext';
+
+// Utilities
+import { httpGET, httpPOST, putData } from '../../utils/apiServices';
 
 // Styling
 import { Button, Form, InputGroup } from 'react-bootstrap';
@@ -10,10 +16,13 @@ import { Button, Form, InputGroup } from 'react-bootstrap';
 const AthleteForm = ({ title }) => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
+  const { showModal, closeModal } = useModal();
 
   // State variables
   const [loading, setLoading] = useState(true);
-  const [errors, setErrors] = useState([]);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [validationErrors, setValidationErrors] = useState([]);
 
   const [formData, setFormData] = useState({
     first_name: '',
@@ -31,20 +40,38 @@ const AthleteForm = ({ title }) => {
 
   // If an id is provided in the route, GET data of the athlete
   useEffect(() => {
-    const updateData = (newData) => {
-      setFormData(newData); // Function to update 'data' state
-    };
-
     const fetchData = async () => {
-      try {
-        await httpGET(`api/athletes/${id}`, updateData, setLoading, 'athlete');
-        // 'athlete' is the specific key for the data in the response
-      } catch (error) {
-        // Handle error if needed
-      }
+      const response = await httpGET(`api/athletes/${id}`, 'athlete');
+      if (response.error) {
+        // Token expired error, log user out
+        if (response.error === 'TokenExpiredError') {
+          showModal(
+            <InfoModal
+              show={true}
+              handleClose={closeModal}
+              title="Token Expired"
+              body={response.errorMsg}
+              primaryAction={handleLogout}
+            />
+          );
+        } else {
+          // Other errors, ask user to contact support
+          setErrorMsg(`${response.error}.  ${response.errorMsg}`);
+          showModal(
+            <InfoModal
+              show={true}
+              handleClose={closeModal}
+              title={response.error}
+              body={response.errorMsg}
+              primaryAction={closeModal}
+            />
+          );
+        }
+      } else setFormData(response);
     };
 
     if (id) fetchData(); // Only fetch data if id is in the route
+    setLoading(false);
   }, [id]); // Include id as it is used in the useEffect
 
   const handleChange = (event) => {
@@ -66,44 +93,36 @@ const AthleteForm = ({ title }) => {
     if (id) {
       // Logic for updating an existing athlete
       console.log('Perform PUT request:', formData);
-      try {
-        const updateAthlete = await putData(`/api/athletes/${id}`, formData);
-        if (updateAthlete.errors) {
-          // Handle backend validation errors
-          const errors = updateAthlete.errors.errors.map((err) => ({
+      const updateAthlete = await putData(`/api/athletes/${id}`, formData);
+      if (updateAthlete.validationErrors) {
+        // Handle backend validation validationErrors
+        const validationErrors =
+          updateAthlete.validationErrors.validationErrors.map((err) => ({
             path: err.path,
             msg: err.msg,
           }));
-          setErrors(errors);
-        } else {
-          // Handle success, reset form, or navigate to a different page
-          console.log('Athlete created successfully:', updateAthlete);
-          navigate(`/athlete/${id}`);
-        }
-      } catch (error) {
-        // General errors
-        // Handle error state or show an error message to the user
+        setValidationErrors(validationErrors);
+      } else {
+        // Handle success, reset form, or navigate to a different page
+        console.log('Athlete created successfully:', updateAthlete);
+        navigate(`/athlete/${id}`);
       }
     } else {
       // Logic for creating a new athlete
       console.log('Perform POST request:', formData);
-      try {
-        const createAthlete = await httpPOST('/api/athletes', formData);
-        if (createAthlete.errors) {
-          // Handle backend validation errors
-          const errors = createAthlete.errors.errors.map((err) => ({
+      const createAthlete = await httpPOST('/api/athletes', formData);
+      if (createAthlete.validationErrors) {
+        // Handle backend validation validationErrors
+        const validationErrors =
+          createAthlete.validationErrors.validationErrors.map((err) => ({
             path: err.path,
             msg: err.msg,
           }));
-          setErrors(errors);
-        } else {
-          // Handle success, reset form, or navigate to a different page
-          console.log('Athlete created successfully:', createAthlete);
-          navigate('/manage-athletes');
-        }
-      } catch (error) {
-        // General errors
-        // Handle error state or show an error message to the user
+        setValidationErrors(validationErrors);
+      } else {
+        // Handle success, reset form, or navigate to a different page
+        console.log('Athlete created successfully:', createAthlete);
+        navigate('/manage-athletes');
       }
     }
   };
@@ -116,8 +135,8 @@ const AthleteForm = ({ title }) => {
   };
 
   // To show backend validation error for an input field
-  const showError = (fieldName) => {
-    return errors.map((error, index) => {
+  const showValidationError = (fieldName) => {
+    return validationErrors.map((error, index) => {
       if (error.path === fieldName) {
         return (
           <p key={index} style={{ color: 'red' }}>
@@ -146,7 +165,7 @@ const AthleteForm = ({ title }) => {
             autoFocus
           />
         </InputGroup>
-        {showError('first_name')}
+        {showValidationError('first_name')}
 
         <InputGroup className="mb-3">
           <InputGroup.Text>Last Name</InputGroup.Text>
@@ -158,7 +177,7 @@ const AthleteForm = ({ title }) => {
             required
           />
         </InputGroup>
-        {showError('last_name')}
+        {showValidationError('last_name')}
 
         <InputGroup className="mb-3">
           <InputGroup.Text>Gender</InputGroup.Text>
@@ -174,7 +193,7 @@ const AthleteForm = ({ title }) => {
             <option value="female">Female</option>
           </Form.Control>
         </InputGroup>
-        {showError('gender')}
+        {showValidationError('gender')}
 
         <InputGroup className="mb-3">
           <InputGroup.Text id="birthdate">Birthdate</InputGroup.Text>
@@ -190,7 +209,7 @@ const AthleteForm = ({ title }) => {
             required
           />
         </InputGroup>
-        {showError('birthdate')}
+        {showValidationError('birthdate')}
 
         <InputGroup className="mb-3">
           <InputGroup.Text id="mobile">Mobile</InputGroup.Text>
@@ -201,7 +220,7 @@ const AthleteForm = ({ title }) => {
             onChange={handleChange}
           />
         </InputGroup>
-        {showError('mobile')}
+        {showValidationError('mobile')}
 
         <InputGroup className="mb-3">
           <InputGroup.Text id="email">Email</InputGroup.Text>
@@ -212,7 +231,7 @@ const AthleteForm = ({ title }) => {
             onChange={handleChange}
           />
         </InputGroup>
-        {showError('email')}
+        {showValidationError('email')}
 
         <InputGroup className="mb-3">
           <InputGroup.Text id="school">School</InputGroup.Text>
@@ -223,7 +242,7 @@ const AthleteForm = ({ title }) => {
             onChange={handleChange}
           />
         </InputGroup>
-        {showError('school')}
+        {showValidationError('school')}
 
         <InputGroup className="mb-3">
           <InputGroup.Text id="active">Active</InputGroup.Text>

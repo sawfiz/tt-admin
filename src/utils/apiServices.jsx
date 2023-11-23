@@ -18,26 +18,23 @@ export const httpGET = async (
 
     // The GET API call
     const response = await fetch(`${BASE_URL}/${endpoint}`, {
-      headers: headers,
+      headers
     });
     const result = await response.json();
-    console.log('🚀 ~ file: apiServices.jsx:29 ~ result:', result);
 
     if (!response.ok) {
       // Throw errors
-      if (result.status === 403) {
+      if (result.status === 403)
         throw {
           name: result.error,
           message: 'Your session has expired. Pleae login again.',
         };
-      }
 
-      if (result.status === 500) {
+      if (result.status === 500)
         throw {
           name: 'Database error',
           message: 'Error fetching data.  Please contact support.',
         };
-      }
 
       throw {
         name: result.error,
@@ -54,37 +51,52 @@ export const httpGET = async (
       error: error.name,
       errorMsg: error.message, // error contains the message already
     };
-    // }
   }
 };
 
 export const httpPOST = async (endpoint, data) => {
   try {
+    // Construct the GET request headers
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    // Set the JWT token in the headers with token saved in the localStorage
+    const token = localStorage.getItem('token');
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify(data),
     });
 
     const result = await response.json();
+    console.log('🚀 ~ file: apiServices.jsx:68 ~ httpPOST ~ result:', result);
     // Check if status on successful (outside 200-299)
     if (!response.ok) {
       // Handle validation errors
-      if (response.status === 400) {
-        return { errors: result.errors };
-      }
+      if (response.status === 400)
+        throw {
+          name: result.error,
+          message: 'Validation errors.',
+          errors: result.errors,
+        };
 
       // Handle username in use error
-      if (response.status === 409) {
-        return { error: result.error, errorMsg: 'Please try again.' };
-      }
+      if (response.status === 409)
+        throw {
+          name: result.error,
+          message: 'Uername already in use.',
+        };
 
       // Handle database connection error
-      if (response.status === 500) {
-        return { error: result.error, errorMsg: 'Please constact support.' };
-      }
+      if (result.status === 500)
+        throw {
+          name: 'Database error',
+          message: 'Error fetching data.  Please contact support.',
+        };
 
       // Other errors
       console.log(result);
@@ -93,8 +105,13 @@ export const httpPOST = async (endpoint, data) => {
     // response is OK, i.e., in 200-299, return success message
     return result;
   } catch (error) {
-    // General errors outside HTTP status codes
-    return { error: 'Connection failed', errorMsg: 'Please constact support.' };
+    console.log('🚀 ~ file: apiServices.jsx:58 ~ error:', error);
+    // return what was thrown in try
+    return {
+      error: error.name,
+      errorMsg: error.message, // error contains the message already
+      validationErrors: error.errors,
+    };
   }
 };
 
