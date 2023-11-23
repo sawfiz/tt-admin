@@ -9,7 +9,7 @@ import { AuthContext } from '../../contexts/AuthContext';
 import { useModal, InfoModal } from '../../contexts/ModalContext';
 
 // Utilities
-import { httpGET, httpPOST, deleteData } from '../../utils/apiServices';
+import { httpGET, httpPOST, httpDELETE } from '../../utils/apiServices';
 
 // Styling
 import { Button, Modal } from 'react-bootstrap';
@@ -80,7 +80,7 @@ export default function AthleteDetails() {
   const handleDelete = async () => {
     try {
       // Send API request to delete the athlete
-      await deleteData(`/api/athletes/${id}`);
+      await httpDELETE(`/api/athletes/${id}`);
       // Redirect or perform any other action upon successful deletion
       navigate('/manage-athletes'); // Redirect to athletes page after deletion
     } catch (error) {

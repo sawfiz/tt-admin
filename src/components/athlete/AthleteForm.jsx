@@ -8,7 +8,7 @@ import { AuthContext } from '../../contexts/AuthContext';
 import { useModal, InfoModal } from '../../contexts/ModalContext';
 
 // Utilities
-import { httpGET, httpPOST, putData } from '../../utils/apiServices';
+import { httpGET, httpPOST, httpPUT } from '../../utils/apiServices';
 
 // Styling
 import { Button, Form, InputGroup } from 'react-bootstrap';
@@ -44,17 +44,7 @@ const AthleteForm = ({ title }) => {
       const response = await httpGET(`api/athletes/${id}`, 'athlete');
 
       if (response.error) {
-        // Display the model. If error is token timed out, click on button logs the user out.
-        showModal(
-          <InfoModal
-            show={true}
-            handleClose={closeModal}
-            title={response.error}
-            body={response.message}
-            primaryAction={response.status === 403 ? handleLogout : closeModal}
-          />
-        );
-        setErrorMsg(`${response.error} ${response.errorMsg}`);
+        displayErrorModal(response);
       } else {
         setFormData(response);
       }
@@ -63,6 +53,21 @@ const AthleteForm = ({ title }) => {
     if (id) fetchData();
     setLoading(false);
   }, [id]); // Include id as it is used in the useEffect
+
+  // Display error modal
+  const displayErrorModal = (response) => {
+    // Display the model. If error is token timed out, click on button logs the user out.
+    showModal(
+      <InfoModal
+        show={true}
+        handleClose={closeModal}
+        title={response.error}
+        body={response.message}
+        primaryAction={response.status === 403 ? handleLogout : closeModal}
+      />
+    );
+    setErrorMsg(`${response.error} ${response.errorMsg}`);
+  };
 
   // Logout if token expired
   const handleLogout = async () => {
@@ -100,29 +105,7 @@ const AthleteForm = ({ title }) => {
     console.log('Perform POST request:', formData);
     const response = await httpPOST('/api/athletes', formData);
     if (response.error) {
-      if (response.status === 400) {
-        // Handle backend validation validationErrors
-        const validationErrors = JSON.parse(response.error).errors.map((err) => ({
-          path: err.path,
-          msg: err.msg,
-        }));
-        setValidationErrors(validationErrors);
-      } else {
-        // Clear validation errors displayed on page
-        setValidationErrors([]);
-        // Handle other errors
-        // Display the model. If error is token timed out, click on button logs the user out.
-        showModal(
-          <InfoModal
-            show={true}
-            handleClose={closeModal}
-            title={response.error}
-            body={response.message}
-            primaryAction={response.status === 403 ? handleLogout : closeModal}
-          />
-        );
-        setErrorMsg(`${response.error} ${response.errorMsg}`);
-      }
+      handleFormErrors(response);
     } else {
       // Handle success, reset form, or navigate to a different page
       console.log('Athlete created successfully:', response);
@@ -133,15 +116,9 @@ const AthleteForm = ({ title }) => {
   const updateAthlete = async () => {
     // Logic for updating an existing athlete
     console.log('Perform PUT request:', formData);
-    const updateAthlete = await putData(`/api/athletes/${id}`, formData);
-    if (updateAthlete.validationErrors) {
-      // Handle backend validation validationErrors
-      const validationErrors =
-        updateAthlete.validationErrors.validationErrors.map((err) => ({
-          path: err.path,
-          msg: err.msg,
-        }));
-      setValidationErrors(validationErrors);
+    const response = await httpPUT(`/api/athletes/${id}`, formData);
+    if (response.error) {
+      handleFormErrors(response);
     } else {
       // Handle success, reset form, or navigate to a different page
       console.log('Athlete updated successfully:', updateAthlete);
@@ -149,11 +126,20 @@ const AthleteForm = ({ title }) => {
     }
   };
 
-  const handleCancel = () => {
-    if (title === 'Create') {
-      navigate('/manage-athletes');
+  const handleFormErrors = (response) => {
+    if (response.status === 400) {
+      // Handle backend validation validationErrors
+      const validationErrors = JSON.parse(response.error).errors.map((err) => ({
+        path: err.path,
+        msg: err.msg,
+      }));
+      setValidationErrors(validationErrors);
+    } else {
+      // Clear validation errors displayed on page
+      setValidationErrors([]);
+      // Handle other errors
+      displayErrorModal(response);
     }
-    // In case of Update, the cancel button is automatically handled
   };
 
   // To show backend validation error for an input field
@@ -168,6 +154,13 @@ const AthleteForm = ({ title }) => {
       }
       return null;
     });
+  };
+
+  const handleCancel = () => {
+    if (title === 'Create') {
+      navigate('/manage-athletes');
+    }
+    // In case of Update, the cancel button is automatically handled
   };
 
   return (

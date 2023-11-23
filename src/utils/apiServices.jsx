@@ -50,64 +50,48 @@ export const httpPOST = async (endpoint, data) => {
   }
 };
 
-export const putData = async (endpoint, data) => {
+export const httpPUT = async (endpoint, data) => {
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: constructHeaders(),
       body: JSON.stringify(data),
     });
 
     const result = await response.json();
-    // Check if status on successful (outside 200-299)
-    if (!response.ok) {
-      // Check if backend validation failed, 400
-      if (response.status === 400) {
-        // throw new Error(JSON.stringify(result.errors));
-        // return with error messages
-        return result;
-      }
-      // Other errors
-      throw new Error('Failed to POST data.');
-    }
-    // response is OK, i.e., in 200-299, return success message
+
+    if (!response.ok) throwError(response, result);
+
     return result;
   } catch (error) {
-    // General errors outside HTTP status codes
-    console.error('Error POST data:', error);
-    throw new Error('Failed to POST data.');
+    // return what was thrown in try
+    return {
+      status: error.status || 500,
+      error: error.name,
+      message: error.message,
+    };
   }
 };
 
-export const deleteData = async (endpoint) => {
+export const httpDELETE = async (endpoint) => {
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: constructHeaders(),
     });
-    console.log(
-      '🚀 ~ file: apiServices.jsx:71 ~ deleteData ~ response:',
-      response
-    );
-
-    // Handling for a successful deletion with 204 status code
-    if (response.status === 204) {
-      return { success: true };
-    }
-
-    if (!response.ok) {
-      throw new Error('Failed to DELETE data.');
-    }
 
     const result = await response.json();
+
+    if (!response.ok) throwError(response, result);
+
     return result;
   } catch (error) {
-    console.error('Error DELETE data:', error);
-    throw new Error('Failed to DELETE data.');
+    // return what was thrown in try
+    return {
+      status: error.status || 500,
+      error: error.name,
+      message: error.message,
+    };
   }
 };
 
@@ -126,7 +110,7 @@ const constructHeaders = () => {
 };
 
 const throwError = (response, result) => {
-  console.log("🚀 ~ file: apiServices.jsx:131 ~ throwError ~ result:", result)
+  console.log('🚀 ~ file: apiServices.jsx:131 ~ throwError ~ result:', result);
   let message = result.message;
   if (response.status === 400) message = JSON.parse(result.error).errors;
   if (response.status === 409) message = 'Uername already in use.';
