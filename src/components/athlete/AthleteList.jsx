@@ -1,26 +1,18 @@
 // AthleteList.js
-import { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-// Contexts
-import { AuthContext } from '../../contexts/AuthContext';
-import { useModal, InfoModal } from '../../contexts/ModalContext';
+import { useState, useEffect } from 'react';
 
 // Components
 import AthleteButton from './AthleteButton';
 
 // Utilities
-import { httpGET, httpPOST } from '../../utils/apiServices';
+import { httpGET } from '../../utils/apiServices';
+import { HandleFetchError } from '../../utils/errorHandling';
 
 // Styling
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 
 const AthleteList = () => {
-  const navigate = useNavigate();
-  const { logout } = useContext(AuthContext);
-  const { showModal, closeModal } = useModal();
-
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -28,6 +20,17 @@ const AthleteList = () => {
   const [activeOnly, setActiveOnly] = useState(true);
   const [selectedGender, setSelectedGender] = useState(null);
   const [searchText, setSearchText] = useState('');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // 'athlete_list' is the specific key for the data in the response
+      const response = await httpGET('api/athletes', 'athlete_list');
+      HandleFetchError(response, setErrorMsg, setData);
+    };
+
+    fetchData();
+    setLoading(false);
+  }, []);
 
   const handleSearch = (e) => {
     const text = e.target.value.toLowerCase();
@@ -47,70 +50,12 @@ const AthleteList = () => {
       })
     : null;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      // 'athlete_list' is the specific key for the data in the response
-      const response = await httpGET('api/athletes', 'athlete_list');
-
-      // Handle errors and show modals
-      if (response.error) {
-        // Token expired error, log user out
-        if (response.error === 'TokenExpiredError') {
-          showModal(
-            <InfoModal
-              show={true}
-              handleClose={closeModal}
-              title="Token Expired"
-              body={response.errorMsg}
-              primaryAction={handleLogout}
-            />
-          );
-        } else {
-          // Other errors, ask user to contact support
-          setErrorMsg(`${response.error}.  ${response.errorMsg}`);
-          showModal(
-            <InfoModal
-              show={true}
-              handleClose={closeModal}
-              title={response.error}
-              body={response.errorMsg}
-              primaryAction={closeModal}
-            />
-          );
-        }
-      } else setData(response);
-    };
-
-    fetchData();
-    setLoading(false);
-  }, []);
-
   // Render the Athlete components
   const athleteButtons = filteredData
     ? filteredData.map((athlete) => (
         <AthleteButton key={athlete._id} data={athlete} small={true} />
       ))
     : null;
-
-  // Logout if token expired
-  const handleLogout = async () => {
-    const loggedout = await httpPOST('logout');
-    if (!loggedout) {
-      // Handle error and show modal
-      showModal(
-        <InfoModal
-          show={true}
-          handleClose={closeModal}
-          title="Connection Error"
-          body="Error connecting to the server.  Please contact support."
-          primaryAction={closeModal}
-        />
-      );
-    }
-    closeModal();
-    logout();
-    navigate('/login');
-  };
 
   return (
     <div>

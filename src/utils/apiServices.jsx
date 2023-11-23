@@ -18,7 +18,7 @@ export const httpGET = async (
 
     // The GET API call
     const response = await fetch(`${BASE_URL}/${endpoint}`, {
-      headers
+      headers,
     });
     const result = await response.json();
 
@@ -26,12 +26,14 @@ export const httpGET = async (
       // Throw errors
       if (result.status === 403)
         throw {
+          code: response.status,
           name: result.error,
           message: 'Your session has expired. Pleae login again.',
         };
 
       if (result.status === 500)
         throw {
+          code: response.status,
           name: 'Database error',
           message: 'Error fetching data.  Please contact support.',
         };
@@ -48,6 +50,7 @@ export const httpGET = async (
     console.log('🚀 ~ file: apiServices.jsx:58 ~ error:', error);
     // return what was thrown in try
     return {
+      code: error.code,
       error: error.name,
       errorMsg: error.message, // error contains the message already
     };
@@ -79,28 +82,39 @@ export const httpPOST = async (endpoint, data) => {
       // Handle validation errors
       if (response.status === 400)
         throw {
-          name: result.error,
-          message: 'Validation errors.',
-          errors: result.errors,
+          code: response.status,
+          name: 'Validation errors',
+          // Pass the validation errors array in message
+          message: JSON.parse(result.error).errors,
         };
 
       // Handle username in use error
       if (response.status === 409)
         throw {
+          code: response.status,
           name: result.error,
           message: 'Uername already in use.',
         };
 
-      // Handle database connection error
+      if (result.status === 403)
+        throw {
+          code: response.status,
+          name: result.error,
+          message: 'Your session has expired. Pleae login again.',
+        };
+
       if (result.status === 500)
         throw {
+          code: response.status,
           name: 'Database error',
           message: 'Error fetching data.  Please contact support.',
         };
 
-      // Other errors
-      console.log(result);
-      throw new Error('Failed to POST data.');
+      throw {
+        code: response.status,
+        name: result.error,
+        message: 'Other errors',
+      };
     }
     // response is OK, i.e., in 200-299, return success message
     return result;
@@ -108,9 +122,9 @@ export const httpPOST = async (endpoint, data) => {
     console.log('🚀 ~ file: apiServices.jsx:58 ~ error:', error);
     // return what was thrown in try
     return {
+      code: error.code,
       error: error.name,
-      errorMsg: error.message, // error contains the message already
-      validationErrors: error.errors,
+      errorMsg: error.message,
     };
   }
 };

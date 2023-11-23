@@ -3,12 +3,9 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 
-// Contexts
-import { AuthContext } from '../../contexts/AuthContext';
-import { useModal, InfoModal } from '../../contexts/ModalContext';
-
 // Utilities
 import { httpGET, httpPOST, putData } from '../../utils/apiServices';
+import { HandleFetchError } from '../../utils/errorHandling';
 
 // Styling
 import { Button, Form, InputGroup } from 'react-bootstrap';
@@ -16,8 +13,6 @@ import { Button, Form, InputGroup } from 'react-bootstrap';
 const AthleteForm = ({ title }) => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { logout } = useContext(AuthContext);
-  const { showModal, closeModal } = useModal();
 
   // State variables
   const [loading, setLoading] = useState(true);
@@ -42,32 +37,7 @@ const AthleteForm = ({ title }) => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await httpGET(`api/athletes/${id}`, 'athlete');
-      if (response.error) {
-        // Token expired error, log user out
-        if (response.error === 'TokenExpiredError') {
-          showModal(
-            <InfoModal
-              show={true}
-              handleClose={closeModal}
-              title="Token Expired"
-              body={response.errorMsg}
-              primaryAction={handleLogout}
-            />
-          );
-        } else {
-          // Other errors, ask user to contact support
-          setErrorMsg(`${response.error}.  ${response.errorMsg}`);
-          showModal(
-            <InfoModal
-              show={true}
-              handleClose={closeModal}
-              title={response.error}
-              body={response.errorMsg}
-              primaryAction={closeModal}
-            />
-          );
-        }
-      } else setFormData(response);
+      HandleFetchError(response, setErrorMsg, setFormData);
     };
 
     if (id) fetchData(); // Only fetch data if id is in the route
@@ -111,14 +81,20 @@ const AthleteForm = ({ title }) => {
       // Logic for creating a new athlete
       console.log('Perform POST request:', formData);
       const createAthlete = await httpPOST('/api/athletes', formData);
-      if (createAthlete.validationErrors) {
-        // Handle backend validation validationErrors
-        const validationErrors =
-          createAthlete.validationErrors.validationErrors.map((err) => ({
+      if (createAthlete.errorMsg) {
+        if (createAthlete.code === 400) {
+          // Handle backend validation validationErrors
+          const validationErrors = createAthlete.errorMsg.map((err) => ({
             path: err.path,
             msg: err.msg,
           }));
-        setValidationErrors(validationErrors);
+          setValidationErrors(validationErrors);
+        } else { // Clear validation errors displayed on page
+          setValidationErrors([])
+        }
+        if  (createAthlete.code === 409) {
+          console.log("Athelete with the same name alreay exisits!");
+        }
       } else {
         // Handle success, reset form, or navigate to a different page
         console.log('Athlete created successfully:', createAthlete);
