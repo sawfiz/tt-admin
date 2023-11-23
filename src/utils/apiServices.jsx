@@ -22,37 +22,28 @@ export const httpGET = async (
     });
     const result = await response.json();
 
+    // If error, throw erros
     if (!response.ok) {
-      // Throw errors
-      if (result.status === 403)
-        throw {
-          code: response.status,
-          name: result.error,
-          message: 'Your session has expired. Pleae login again.',
-        };
+      let message = result.message;
+      if (response.status === 500)
+        message = 'Database error, please contact support.';
+      if (response.status === 403)
+        message = 'Token timed out, please contact support.';
 
-      if (result.status === 500)
-        throw {
-          code: response.status,
-          name: 'Database error',
-          message: 'Error fetching data.  Please contact support.',
-        };
-
-      throw {
-        name: result.error,
-        message: 'Other errors',
-      };
+      const error = new Error(message || 'Fail to fetch');
+      error.name = result.error;
+      error.status = response.status;
+      throw error;
     }
+
     // Check for a specific data key
     const data = dataKey ? result[dataKey] : result;
     return data;
   } catch (error) {
-    console.log('🚀 ~ file: apiServices.jsx:58 ~ error:', error);
-    // return what was thrown in try
     return {
-      code: error.code,
+      status: error.status || 500,
       error: error.name,
-      errorMsg: error.message, // error contains the message already
+      message: error.message, 
     };
   }
 };

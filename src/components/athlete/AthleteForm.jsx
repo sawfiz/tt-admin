@@ -5,7 +5,6 @@ import { format } from 'date-fns';
 
 // Utilities
 import { httpGET, httpPOST, putData } from '../../utils/apiServices';
-import { HandleFetchError } from '../../utils/errorHandling';
 
 // Styling
 import { Button, Form, InputGroup } from 'react-bootstrap';
@@ -37,7 +36,6 @@ const AthleteForm = ({ title }) => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await httpGET(`api/athletes/${id}`, 'athlete');
-      HandleFetchError(response, setErrorMsg, setFormData);
     };
 
     if (id) fetchData(); // Only fetch data if id is in the route
@@ -80,24 +78,23 @@ const AthleteForm = ({ title }) => {
     } else {
       // Logic for creating a new athlete
       console.log('Perform POST request:', formData);
-      const createAthlete = await httpPOST('/api/athletes', formData);
-      if (createAthlete.errorMsg) {
-        if (createAthlete.code === 400) {
+      const response = await httpPOST('/api/athletes', formData);
+      if (response.error) {
+        if (response.code === 400) {
           // Handle backend validation validationErrors
-          const validationErrors = createAthlete.errorMsg.map((err) => ({
+          const validationErrors = response.errorMsg.map((err) => ({
             path: err.path,
             msg: err.msg,
           }));
           setValidationErrors(validationErrors);
-        } else { // Clear validation errors displayed on page
-          setValidationErrors([])
-        }
-        if  (createAthlete.code === 409) {
-          console.log("Athelete with the same name alreay exisits!");
+        } else {
+          // Clear validation errors displayed on page
+          setValidationErrors([]);
+          // Handle other errors
         }
       } else {
         // Handle success, reset form, or navigate to a different page
-        console.log('Athlete created successfully:', createAthlete);
+        console.log('Athlete created successfully:', response);
         navigate('/manage-athletes');
       }
     }

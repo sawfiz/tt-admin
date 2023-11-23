@@ -1,18 +1,26 @@
 // AthleteList.js
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Components
 import AthleteButton from './AthleteButton';
 
+// Contexts
+import { AuthContext } from '../../contexts/AuthContext';
+import { useModal, InfoModal } from '../../contexts/ModalContext';
+
 // Utilities
-import { httpGET } from '../../utils/apiServices';
-import { HandleFetchError } from '../../utils/errorHandling';
+import { httpGET, httpPOST } from '../../utils/apiServices';
 
 // Styling
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 
 const AthleteList = () => {
+  const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
+  const { showModal, closeModal } = useModal();
+
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -25,12 +33,43 @@ const AthleteList = () => {
     const fetchData = async () => {
       // 'athlete_list' is the specific key for the data in the response
       const response = await httpGET('api/athletes', 'athlete_list');
-      HandleFetchError(response, setErrorMsg, setData);
+
+      if (response.error) {
+        // Display the model. If error is token timed out, click on button logs the user out.
+        showModal(
+          <InfoModal
+            show={true}
+            handleClose={closeModal}
+            title={response.error}
+            body={response.message}
+            primaryAction={response.status === 403 ? handleLogout : closeModal}
+          />
+        );
+        setErrorMsg(`${response.error} ${response.errorMsg}`);
+      } else {
+        setData(response);
+      }
     };
 
     fetchData();
     setLoading(false);
   }, []);
+
+  // Logout if token expired
+  const handleLogout = async () => {
+    const loggedout = await httpPOST('logout');
+    if (!loggedout) {
+      // Handle error and show modal
+      showModal(
+        'Connection Error',
+        'Error connecting to the server.  Please contact support.',
+        closeModal
+      );
+    }
+    closeModal();
+    logout();
+    navigate('/login');
+  };
 
   const handleSearch = (e) => {
     const text = e.target.value.toLowerCase();
