@@ -122,13 +122,17 @@ const AthleteForm = ({ title }) => {
     } else {
       // Handle success, reset form, or navigate to a different page
       console.log('Athlete updated successfully:', updateAthlete);
-      navigate(`/athlete/${id}`);
+      navigate(`/athletes/${id}`);
     }
   };
 
   const handleFormErrors = (response) => {
+    console.log("🚀 ~ file: AthleteForm.jsx:130 ~ handleFormErrors ~ response:", response)
     if (response.status === 400) {
       // Handle backend validation validationErrors
+      // const validationErrors = JSON.parse(response).errors.map((err) => ({
+        const errors = JSON.parse(response.error)
+        console.log("🚀 ~ file: AthleteForm.jsx:135 ~ //validationErrors ~ errors:", errors)
       const validationErrors = JSON.parse(response.error).errors.map((err) => ({
         path: err.path,
         msg: err.msg,
@@ -160,6 +164,7 @@ const AthleteForm = ({ title }) => {
     if (title === 'Create') {
       navigate('/manage-athletes');
     }
+    navigate(`/athletes/${id}`);
     // In case of Update, the cancel button is automatically handled
   };
 

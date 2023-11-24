@@ -54,7 +54,8 @@ const constructHeaders = () => {
 };
 
 const throwError = (response, result) => {
-  console.log('🚀 ~ file: apiServices.jsx:131 ~ throwError ~ result:', result);
+  console.log("🚀 ~ file: apiServices.jsx:57 ~ throwError ~ response:", response)
+  console.log("🚀 ~ file: apiServices.jsx:57 ~ throwError ~ result:", result)
   let message = result.message;
   if (response.status === 400) message = JSON.parse(result.error).errors;
   if (response.status === 409) message = 'Uername already in use.';
@@ -68,5 +69,6 @@ const throwError = (response, result) => {
   const error = new Error(message || 'Failed to POST data.');
   error.name = result.error;
   error.status = response.status;
+  console.log("🚀 ~ file: apiServices.jsx:69 ~ throwError ~ error:", error)
   throw error;
 };

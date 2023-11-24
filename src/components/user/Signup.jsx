@@ -1,8 +1,9 @@
 // Libraries
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Contexts
+import { AuthContext } from '../../contexts/AuthContext';
 import { useModal, InfoModal } from '../../contexts/ModalContext';
 
 // Utilities
@@ -13,9 +14,10 @@ import { Form, Button } from 'react-bootstrap';
 
 export default function Signup() {
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
   const { showModal, closeModal } = useModal();
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     password1: '',
@@ -23,9 +25,12 @@ export default function Signup() {
     first_name: '',
     last_name: '',
     gender: '',
+    mobile: '',
+    email: ''
   });
   const [match, setMatch] = useState(true);
-  const [errors, setErrors] = useState([]);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [validationErrors, setValidationErrors] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,41 +42,49 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
+    console.log("🚀 ~ file: Signup.jsx:48 ~ handleSubmit ~ formData:", formData)
     const { password1, password2 } = formData;
-    setMatch(password1 === password2);
+    const passwordMatch = password1 === password2;
+    setMatch(passwordMatch);
 
-    if (password1 === password2) {
-      const createUser = await httpRequest('POST', '/api/users', formData);
-
-      if (createUser.errors) {
-        // Handle validation errors
-        const errors = createUser.errors.errors.map((err) => ({
-          path: err.path,
-          msg: err.msg,
-        }));
-        setErrors(errors);
-      } else if (createUser.error) {
-        // Handle backend validation errors
-        showModal(
-          <InfoModal
-            show={true}
-            handleClose={closeModal}
-            title={createUser.error}
-            body={createUser.errorMsg}
-            primaryAction={closeModal}
-          />
-        );
+    if (passwordMatch) {
+      const response = await httpRequest('POST', '/api/users', formData);
+      setLoading(false);
+      console.log(
+        '🚀 ~ file: Signup.jsx:48 ~ handleSubmit ~ response:',
+        response
+      );
+      if (response.error) {
+        handleFormErrors(response);
       } else {
         // Handle success, reset form, or navigate to a different page
-        console.log('User created successfully:', createUser);
+        console.log('User created successfully:', response);
         navigate('/');
       }
     }
   };
 
+  const handleFormErrors = (response) => {
+    if (response.status === 400) {
+      // Handle backend validation validationErrors
+      const validationErrors = JSON.parse(response.error).errors.map((err) => ({
+        path: err.path,
+        msg: err.msg,
+      }));
+      setValidationErrors(validationErrors);
+    } else {
+      // Clear validation errors displayed on page
+      setValidationErrors([]);
+      // Handle other errors
+      displayErrorModal(response);
+    }
+  };
+
   // To show backend validation error for an input field
-  const showError = (fieldName) => {
-    return errors.map((error, index) => {
+  const showValidationError = (fieldName) => {
+    return validationErrors.map((error, index) => {
       if (error.path === fieldName) {
         return (
           <p key={index} style={{ color: 'red' }}>
@@ -81,6 +94,29 @@ export default function Signup() {
       }
       return null;
     });
+  };
+
+  // Display error modal
+  const displayErrorModal = (response) => {
+    // Display the model. If error is token timed out, click on button logs the user out.
+    showModal(
+      <InfoModal
+        show={true}
+        handleClose={closeModal}
+        title={response.error}
+        body={response.message}
+        primaryAction={response.status === 403 ? handleLogout : closeModal}
+      />
+    );
+    setErrorMsg(`${response.error} ${response.errorMsg}`);
+  };
+
+  // Logout if token expired
+  const handleLogout = async () => {
+    await httpRequest('POST', '/logout');
+    closeModal();
+    logout();
+    navigate('/login');
   };
 
   return (
@@ -102,7 +138,7 @@ export default function Signup() {
             className="px-1 w-40"
           />
         </div>
-        {showError('first_name')}
+        {showValidationError('first_name')}
 
         <div className="flex justify-between w-80 items-center mb-2">
           <div>
@@ -119,7 +155,7 @@ export default function Signup() {
             className="px-1 w-40"
           />
         </div>
-        {showError('last_name')}
+        {showValidationError('last_name')}
 
         <div className="flex justify-between w-80 items-center mb-2">
           <div>
@@ -137,7 +173,7 @@ export default function Signup() {
             <option value="female">Female</option>
           </select>
         </div>
-        {showError('gender')}
+        {showValidationError('gender')}
 
         <div className="flex justify-between w-80 items-center mb-2">
           <div>
@@ -154,7 +190,7 @@ export default function Signup() {
             className="px-1 w-40"
           />
         </div>
-        {showError('mobile')}
+        {showValidationError('mobile')}
 
         <div className="flex justify-between w-80 items-center mb-2">
           <div>
@@ -170,7 +206,7 @@ export default function Signup() {
             className="px-1 w-52"
           />
         </div>
-        {showError('email')}
+        {showValidationError('email')}
 
         <hr />
 
@@ -189,7 +225,7 @@ export default function Signup() {
             className="px-1 w-40"
           />
         </div>
-        {showError('username')}
+        {showValidationError('username')}
 
         <div className="flex justify-between w-80 items-center mb-2">
           <div>
@@ -206,7 +242,7 @@ export default function Signup() {
             className="px-1 w-40"
           />
         </div>
-        {showError('password')}
+        {showValidationError('password')}
 
         <div className="flex justify-between w-80 items-center mb-2">
           <div>
@@ -230,7 +266,7 @@ export default function Signup() {
           Submit
         </Button>
       </Form>
-      {loading && (<p>Submitting...</p>)}
+      {loading && <p>Submitting...</p>}
     </main>
   );
 }
