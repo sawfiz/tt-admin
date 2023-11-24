@@ -1,27 +1,32 @@
-// AthleteList.js
+// Libraries
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Components
-import AthleteButton from './AthleteButton';
+import DynamicButton from './DynamicButton';
 
 // Contexts
-import { AuthContext } from '../../contexts/AuthContext';
-import { useModal, InfoModal } from '../../contexts/ModalContext';
+import { AuthContext } from '../contexts/AuthContext';
+import { useModal, InfoModal } from '../contexts/ModalContext';
 
 // Utilities
-import { httpRequest } from '../../utils/apiServices';
+import { httpRequest } from '../utils/apiServices';
 
 // Styling
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 
-const AthleteList = () => {
+const DynamicList = ({
+  fetchDataFunction,
+  dataKey,
+  // buttonComponent,
+  filterOptions,
+}) => {
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
   const { showModal, closeModal } = useModal();
 
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
 
@@ -31,33 +36,34 @@ const AthleteList = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await httpRequest(
-        'GET',
-        '/api/athletes',
-        null,
-        'athlete_list'
-      );
-
-      if (response.error) {
-        // Display the model. If error is token timed out, click on button logs the user out.
-        showModal(
-          <InfoModal
-            show={true}
-            handleClose={closeModal}
-            title={response.error}
-            body={response.message}
-            primaryAction={response.status === 403 ? handleLogout : closeModal}
-          />
-        );
-        setErrorMsg(`${response.error} ${response.errorMsg}`);
-      } else {
-        setData(response);
+      try {
+        const response = await fetchDataFunction();
+        if (response.error) {
+          setErrorMsg(`${response.error} ${response.errorMsg}`);
+          // Handle errors
+          showModal(
+            <InfoModal
+              show={true}
+              handleClose={closeModal}
+              title={response.error}
+              body={response.message}
+              primaryAction={
+                response.status === 403 ? handleLogout : closeModal
+              }
+            />
+          );
+        } else {
+          setData(response[dataKey]);
+        }
+      } catch (error) {
+        setErrorMsg(error.message || 'An error occurred');
+        // Handle error
       }
+      setLoading(false);
     };
 
     fetchData();
-    setLoading(false);
-  }, []);
+  }, [fetchDataFunction, dataKey]);
 
   // Logout if token expired
   const handleLogout = async () => {
@@ -72,25 +78,22 @@ const AthleteList = () => {
     setSearchText(text);
   };
 
-  // Filter athletes based on searchText, activeOnly and selectedGender
-  const filteredData = data
-    ? data.filter((athlete) => {
-        const { name, gender, active } = athlete;
+  const filterData = (item) => {
+    const nameIncludesText = item.name.toLowerCase().includes(searchText);
+    const isGenderMatch = !selectedGender || selectedGender === item.gender;
+    const isActiveMatch = !activeOnly || item.active === activeOnly;
 
-        const nameIncludesText = name.toLowerCase().includes(searchText);
-        const isGenderMatch = !selectedGender || selectedGender === gender;
-        const isActiveMatch = !activeOnly || active === activeOnly;
+    return nameIncludesText && isGenderMatch && isActiveMatch;
+  };
 
-        return nameIncludesText && isGenderMatch && isActiveMatch;
-      })
-    : null;
+  const filteredData = data ? data.filter(filterData) : [];
 
-  // Render the Athlete components
-  const athleteButtons = filteredData
-    ? filteredData.map((athlete) => (
-        <AthleteButton key={athlete._id} data={athlete} small={true} />
-      ))
-    : null;
+  const buttons = filteredData.map((item) => (
+    // <DynamicButton key={item._id} data={item} component={buttonComponent} />
+    <DynamicButton key={item._id} data={item} />
+  ));
+
+  console.log("Dynamic List");
 
   return (
     <div>
@@ -101,7 +104,7 @@ const AthleteList = () => {
       ) : (
         data && (
           <div>
-            <h3>Athletes</h3>
+            <h3>{dataKey}</h3>
 
             {/* Search athlete based on name */}
             <InputGroup className="mb-3">
@@ -132,16 +135,16 @@ const AthleteList = () => {
                   type=""
                   onChange={(e) => setSelectedGender(e.target.value)}
                 >
-                  <option value="">Boys & Girls</option>
-                  <option value="male">Boys</option>
-                  <option value="female">Girls</option>
+                  <option value="">M & F</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
                 </select>
               </div>
             </div>
 
             {/* Filtered athlete list */}
             <div className="grid grid-cols-2 gap-[10px] md:grid-cols-3 lg:grid-cols-4 mb-4">
-              {athleteButtons}
+              {buttons}
             </div>
           </div>
         )
@@ -150,4 +153,4 @@ const AthleteList = () => {
   );
 };
 
-export default AthleteList;
+export default DynamicList;

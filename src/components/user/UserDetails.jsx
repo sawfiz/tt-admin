@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
-import { httpGET, deleteData } from '../../utils/apiServices';
+import {httpRequest } from '../../utils/apiServices';
 
 // Styling
 import { Button, Modal } from 'react-bootstrap';
@@ -18,16 +18,10 @@ export default function UserDetails() {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const updateData = (newData) => {
-      setData(newData); // Function to update 'data' state
-      console.log(
-        '🚀 ~ file: userDetails.jsx:23 ~ updateData ~ newData:',
-        newData
-      );
-    };
 
     const fetchData = async () => {
-        const response = await httpGET(`api/users/${id}`, updateData, setLoading, 'user');
+        const response = await httpRequest('GET',`/api/users/${id}`, null, 'user');
+        setData(response)
     };
 
     fetchData();
@@ -54,7 +48,7 @@ export default function UserDetails() {
   const handleDelete = async () => {
     try {
       // Send API request to delete the user
-      await deleteData(`/api/users/${id}`);
+      await httpRequest('DELTET', `/api/users/${id}`);
       // Redirect or perform any other action upon successful deletion
       navigate('/manage-users'); // Redirect to users page after deletion
     } catch (error) {

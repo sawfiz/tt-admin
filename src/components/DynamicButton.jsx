@@ -2,13 +2,13 @@
 // Libraries
 import { Link } from 'react-router-dom';
 
-export default function UserButton({ data, small }) {
+export default function DynamicButton({ data, small }) {
   const imgSrc =
   data.photoURL ||
   (data.gender === 'male'
-    ? '/images/man.png'
+    ? '/images/boy.png'
     : data.gender === 'female'
-    ? '/images/woman.png'
+    ? '/images/girl.png'
     : '/images/unknown.png');
 
   const image = (
@@ -20,15 +20,15 @@ export default function UserButton({ data, small }) {
   );
 
   return (
-    <Link to={`/user/${data._id}`} className="no-underline text-slate-700">
+    <Link to={`/athlete/${data._id}`} className="no-underline text-slate-700">
       { data.active ? (
         <div className="h-10 outline-dashed outline-1 outline-pink-300 flex justify-between items-center p-1">
-          {data.username}
+          {data.name}
           <div className="w-8 h-8">{image}</div>
         </div>
       ) : (
         <div className="h-10 outline-dashed outline-1 outline-slate-300 bg-gray-300 opacity-50 flex justify-between items-center p-1">
-          {data.username}
+          {data.name}
           <div className="w-8 h-8">{image}</div>
         </div>
       )}
