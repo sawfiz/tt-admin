@@ -20,7 +20,7 @@ import ManageAthletes from '../components/athlete/ManageAthletes';
 import AthleteDetails from '../components/athlete/AthleteDetails';
 import AthleteForm from '../components/athlete/AthleteForm';
 
-import ManageUsers from '../components/user/ManageUsers';
+import ManageVisitors from '../components/user/ManageVisitors';
 import UserDetails from '../components/user/UserDetails';
 
 const routes = createRoutesFromElements(
@@ -43,10 +43,10 @@ const routes = createRoutesFromElements(
         element={<AthleteForm title="Update" />}
       />
       {/* Display athlete detales */}
-      <Route path="/athlete/:id" element={<AthleteDetails />} />
+      <Route path="/athletes/:id" element={<AthleteDetails />} />
 
-      <Route path="/manage-users" element={<ManageUsers />} />
-      <Route path="/user/:id" element={<UserDetails />} />
+      <Route path="/manage-visitors" element={<ManageVisitors />} />
+      <Route path="/users/:id" element={<UserDetails />} />
     </Route>
   </Route>
 );

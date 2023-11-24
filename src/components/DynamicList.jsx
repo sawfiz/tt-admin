@@ -53,7 +53,7 @@ const DynamicList = ({
             />
           );
         } else {
-          setData(response[dataKey]);
+          setData(response[dataKey + '_list']);
         }
       } catch (error) {
         setErrorMsg(error.message || 'An error occurred');
@@ -90,10 +90,8 @@ const DynamicList = ({
 
   const buttons = filteredData.map((item) => (
     // <DynamicButton key={item._id} data={item} component={buttonComponent} />
-    <DynamicButton key={item._id} data={item} />
+    <DynamicButton key={item._id} data={item} dataKey={dataKey} />
   ));
-
-  console.log("Dynamic List");
 
   return (
     <div>
@@ -104,8 +102,6 @@ const DynamicList = ({
       ) : (
         data && (
           <div>
-            <h3>{dataKey}</h3>
-
             {/* Search athlete based on name */}
             <InputGroup className="mb-3">
               <InputGroup.Text>🔍</InputGroup.Text>

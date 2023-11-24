@@ -20,8 +20,7 @@ const ManageAthletes = () => {
       </Link>
       <DynamicList
         fetchDataFunction={() => httpRequest('GET', '/api/athletes')}
-        dataKey="athlete_list"
-        // buttonComponent={AthleteButton}
+        dataKey="athletes"
         filterOptions={'name'}
       />
     </main>

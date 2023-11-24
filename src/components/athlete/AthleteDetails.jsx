@@ -73,7 +73,7 @@ export default function AthleteDetails() {
     : null;
 
   // Function to open the delete confirmation modal
-  const handleshowDeleteModal = () => {
+  const handleShowDeleteModal = () => {
     setShowDeleteModal(true);
   };
 
@@ -150,7 +150,7 @@ export default function AthleteDetails() {
                 <Link to={`/athlete/update/${id}`}>
                   <Button variant="primary">Update</Button>
                 </Link>
-                <Button variant="danger" onClick={handleshowDeleteModal}>
+                <Button variant="danger" onClick={handleShowDeleteModal}>
                   Delete
                 </Button>
               </div>

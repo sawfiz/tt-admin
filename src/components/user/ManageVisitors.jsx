@@ -11,18 +11,17 @@ import { httpRequest } from '../../utils/apiServices';
 // Styling
 import Button from 'react-bootstrap/esm/Button';
 
-const ManageUsers = () => {
+const ManageVisitors = () => {
   return (
     <main>
-      <h2>Manage Users</h2>
+      <h2>Manage Visitors</h2>
       <DynamicList
         fetchDataFunction={() => httpRequest('GET', '/api/users')}
-        dataKey="user_list"
-        // buttonComponent={AthleteButton}
+        dataKey="users"
         filterOptions={'username'}
       />
     </main>
   );
 };
 
-export default ManageUsers;
+export default ManageVisitors;

@@ -2,7 +2,7 @@
 // Libraries
 import { Link } from 'react-router-dom';
 
-export default function DynamicButton({ data, small }) {
+export default function DynamicButton({ data,  dataKey }) {
   const imgSrc =
   data.photoURL ||
   (data.gender === 'male'
@@ -20,7 +20,7 @@ export default function DynamicButton({ data, small }) {
   );
 
   return (
-    <Link to={`/athlete/${data._id}`} className="no-underline text-slate-700">
+    <Link to={`/${dataKey}/${data._id}`} className="no-underline text-slate-700">
       { data.active ? (
         <div className="h-10 outline-dashed outline-1 outline-pink-300 flex justify-between items-center p-1">
           {data.name}
