@@ -11,18 +11,20 @@ import { httpRequest } from '../../utils/apiServices';
 // Styling
 import Button from 'react-bootstrap/esm/Button';
 
-const ManageVisitors = () => {
+const ManageAttendances = () => {
   return (
     <main>
-      <h2>Manage Visitors</h2>
+      <h2>Manage Attendances</h2>
+      <Link to="/attendance/new">
+        <Button style={{ margin: '1rem 0' }}>Add Attendance</Button>
+      </Link>
       <DynamicList
-        fetchDataFunction={() => httpRequest('GET', '/api/users')}
-        dataKey="users"
-        filterOptions={'username'}
-        showButtons={true}
+        fetchDataFunction={() => httpRequest('GET', '/api/athletes')}
+        dataKey="athletes"
+        filterOptions={'name'}
       />
     </main>
   );
 };
 
-export default ManageVisitors;
+export default ManageAttendances;

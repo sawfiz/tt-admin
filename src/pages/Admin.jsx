@@ -12,7 +12,7 @@ export default function Admin() {
         <div className="outline-dashed outline-2 outline-pink-300 px-2 py-2 mb-4">
           <div className="grid grid-cols-2 gap-2">
             <Button variant="primary">
-              <Link to="/add-attendance" className="no-underline">
+              <Link to="/manage-attendances" className="no-underline">
                 <div className="grid grid-rows-[2fr_1fr]">
                   <div className=" text-[2rem] drop-shadow-[1px_1px_2px_rgba(0,0,0,0.9)] ">
                     📝

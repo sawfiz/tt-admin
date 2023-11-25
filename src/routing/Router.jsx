@@ -16,6 +16,9 @@ import Admin from '../pages/Admin';
 import Login from '../components/user/Login';
 import Logout from '../components/user/Logout';
 
+import ManageAttendances from '../components/attendance/ManageAttendance';
+import AttendanceForm from '../components/attendance/AttendanceForm';
+
 import ManageAthletes from '../components/athlete/ManageAthletes';
 import AthleteDetails from '../components/athlete/AthleteDetails';
 import AthleteForm from '../components/athlete/AthleteForm';
@@ -44,6 +47,10 @@ const routes = createRoutesFromElements(
       />
       {/* Display athlete detales */}
       <Route path="/athletes/:id" element={<AthleteDetails />} />
+
+      <Route path="/manage-attendances" element={<ManageAttendances />} />
+      <Route path="/attendance/new" element={<AttendanceForm />} />
+
 
       <Route path="/manage-visitors" element={<ManageVisitors />} />
       <Route path="/users/:id" element={<UserDetails />} />

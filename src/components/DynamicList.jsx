@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 // Components
 import DynamicButton from './DynamicButton';
+import DynamicCheckBox from './DynamicCheckBox';
 
 // Contexts
 import { AuthContext } from '../contexts/AuthContext';
@@ -20,6 +21,10 @@ const DynamicList = ({
   fetchDataFunction,
   dataKey,
   filterOptions,
+  list,
+  addItem,
+  removeItem,
+  showButtons
 }) => {
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
@@ -92,6 +97,11 @@ const DynamicList = ({
     <DynamicButton key={item._id} data={item} dataKey={dataKey} />
   ));
 
+  const checkboxs = list ? filteredData.map((item) => (
+    // <DynamicButton key={item._id} data={item} component={buttonComponent} />
+    <DynamicCheckBox key={item._id} data={item} list={list} addItem={addItem} removeItem={removeItem} />
+  )) : null;
+
   return (
     <div>
       {loading ? (
@@ -139,7 +149,7 @@ const DynamicList = ({
 
             {/* Filtered athlete list */}
             <div className="grid grid-cols-2 gap-[10px] md:grid-cols-3 lg:grid-cols-4 mb-4">
-              {buttons}
+              {showButtons ? buttons :checkboxs}
             </div>
           </div>
         )

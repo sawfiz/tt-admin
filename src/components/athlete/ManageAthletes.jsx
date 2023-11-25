@@ -22,6 +22,7 @@ const ManageAthletes = () => {
         fetchDataFunction={() => httpRequest('GET', '/api/athletes')}
         dataKey="athletes"
         filterOptions={'name'}
+        showButtons={true}
       />
     </main>
   );
