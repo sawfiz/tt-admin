@@ -159,7 +159,7 @@ const DynamicList = ({
             )}
 
             {/* Filtered athlete list */}
-            <div className="grid grid-cols-2 gap-[10px] md:grid-cols-3 lg:grid-cols-4 mb-4">
+            <div className="grid grid-cols-2 gap-[7px] md:grid-cols-3 lg:grid-cols-4 mb-4">
               {showButtons ? buttons : checkboxs}
             </div>
           </div>

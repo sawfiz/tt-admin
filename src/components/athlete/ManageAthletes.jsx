@@ -23,6 +23,7 @@ const ManageAthletes = () => {
         dataKey="athletes"
         filterOptions={'name'}
         showButtons={true}
+        showFilter={true}
       />
     </main>
   );

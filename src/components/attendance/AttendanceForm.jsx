@@ -26,9 +26,10 @@ export default function AttendanceForm() {
   const [formData, setFormData] = useState({
     date: today,
     stadium: '',
+    coachList: [],
     attendeeList: [],
   });
-  const { date, stadium, attendeeList } = formData;
+  const { date, stadium, coachList, attendeeList } = formData;
 
   const fetchDataOnChange = async (day, std) => {};
 
@@ -37,6 +38,15 @@ export default function AttendanceForm() {
     if (name === 'date') fetchDataOnChange(value); // value is the new date
     if (name === 'stadium') fetchDataOnChange(date, value); // value is the new stadium
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const addCoach = (id) => {
+    setFormData({ ...formData, coachList: [...coachList, id] });
+  };
+
+  const removeCoach = (id) => {
+    const filteredList = coachList.filter((attendeeId) => attendeeId !== id);
+    setFormData({ ...formData, coachList: filteredList });
   };
 
   const addAttendee = (id) => {
@@ -66,9 +76,9 @@ export default function AttendanceForm() {
       fetchDataFunction={() => httpRequest('GET', '/api/athletes')}
       dataKey="athletes"
       filterOptions={'name'}
-      list={attendeeList}
-      addItem={addAttendee}
-      removeItem={removeAttendee}
+      list={coachList}
+      addItem={addCoach}
+      removeItem={removeCoach}
       showButtons={false}
       showFilter={false}
     />

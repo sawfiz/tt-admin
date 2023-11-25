@@ -25,7 +25,7 @@ export default function DynamicCheckBox({
   };
 
   return (
-    <div className='m-1'>
+    <div className='m-0'>
       <input type="checkbox" checked={isChecked} onChange={handleChange} />{' '}
       {data.name}
     </div>

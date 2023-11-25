@@ -20,6 +20,7 @@ const ManageVisitors = () => {
         dataKey="users"
         filterOptions={'username'}
         showButtons={true}
+        showFilter={true}
       />
     </main>
   );
