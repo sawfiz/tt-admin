@@ -1,12 +1,15 @@
 // Libraries
 import { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
 
 // Contexts
 import { AuthContext } from '../contexts/AuthContext';
 import { useModal, InfoModal } from '../contexts/ModalContext';
+
+// Components
+import AtheletPersonalDetails from './athlete/AtheletPersonalDetails';
+import UserPersonalDetails from './user/UserPersonalDetails';
 
 // Utilities
 import { httpRequest } from '../utils/apiServices';
@@ -14,8 +17,8 @@ import { httpRequest } from '../utils/apiServices';
 // Styling
 import { Button, Modal } from 'react-bootstrap';
 
-export default function DynamicDetails({type, id}) {
-  // const { id } = useParams();
+export default function DynamicDetails({ type, id }) {
+  const manageType = type === 'user' ? 'visitor' : type;
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
   const { showModal, closeModal } = useModal();
@@ -63,15 +66,6 @@ export default function DynamicDetails({type, id}) {
     navigate('/login');
   };
 
-  const imgSrc = data
-    ? data.photoURL ||
-      (data.gender === 'male'
-        ? '/images/boy.png'
-        : data.gender === 'female'
-        ? '/images/girl.png'
-        : '/images/unknown.png')
-    : null;
-
   // Function to open the delete confirmation modal
   const handleShowDeleteModal = () => {
     setShowDeleteModal(true);
@@ -85,9 +79,9 @@ export default function DynamicDetails({type, id}) {
   const handleDelete = async () => {
     try {
       // Send API request to delete the athlete
-      await httpRequest('DELETE', `/api/athletes/${id}`);
+      await httpRequest('DELETE', `/api/${type}s/${id}`);
       // Redirect or perform any other action upon successful deletion
-      navigate('/manage-athletes'); // Redirect to athletes page after deletion
+      navigate(`/manage-${manageType}s`); // Redirect to athletes page after deletion
     } catch (error) {
       console.error('Error deleting athlete:', error);
       // Handle error state or show an error message to the user
@@ -98,10 +92,31 @@ export default function DynamicDetails({type, id}) {
     handleCloseModal(); // Close the modal
     handleDelete(); // Trigger the delete function
   };
+
+  let personalDetails;
+  if (type === 'athlete')
+    personalDetails = (
+      <AtheletPersonalDetails
+        id={id}
+        data={data}
+        type={type}
+        handleShowDeleteModal={handleShowDeleteModal}
+      />
+    );
+  if (type === 'user')
+    personalDetails = (
+      <UserPersonalDetails
+        id={id}
+        data={data}
+        type={type}
+        handleShowDeleteModal={handleShowDeleteModal}
+      />
+    );
+
   return (
     <div>
-      <Link to={`/manage-${type}s`}>
-        <Button variant="outline-secondary">⬅️ Atheltes</Button>
+      <Link to={`/manage-${manageType}s`}>
+        <Button variant="outline-secondary">⬅️ {`${manageType}s`}</Button>
       </Link>
       <div>
         {loading ? (
@@ -109,53 +124,7 @@ export default function DynamicDetails({type, id}) {
         ) : errorMsg ? (
           <p className="text-danger">{errorMsg}</p>
         ) : (
-          data && (
-            <div>
-              {/* Athlete full name */}
-              <h2 className="mt-24 font-bold text-xl">{data.name}</h2>
-              {/* Profile photo */}
-              <div className=" absolute top-4 right-[0.5rem] w-28 h-28 overflow-hidden">
-                <img
-                  className="w-full h-full object-center object-cover rounded-lg "
-                  src={imgSrc}
-                  alt="profile"
-                />
-              </div>
-              {/* Personal details */}
-              <div className="outline-dashed outline-2 outline-pink-300 p-2 grid grid-cols-[1fr_2fr] my-2">
-                <div className=" font-bold">Active</div>
-                <div>{data.active ? '✅' : '❌'}</div>
-                <div className=" font-bold">Gender</div>
-                <div>{data.gender}</div>
-                <div className=" font-bold">Birthdate</div>
-                <div>
-                  {data.birthdate
-                    ? format(new Date(data.birthdate), 'yyyy-MM-dd')
-                    : ''}
-                </div>
-                <div className=" font-bold">Mobile</div>
-                <div>{data.mobile}</div>
-                <div className=" font-bold">Email</div>
-                <div>{data.email}</div>
-                <div className=" font-bold">School</div>
-                <div>{data.school}</div>
-                <div className=" font-bold">Father</div>
-                <div>{data.father}</div>
-                <div className=" font-bold">Mother</div>
-                <div>{data.mother}</div>
-              </div>
-
-              {/* Buttons */}
-              <div className="flex justify-around">
-                <Link to={`/athlete/update/${id}`}>
-                  <Button variant="primary">Update</Button>
-                </Link>
-                <Button variant="danger" onClick={handleShowDeleteModal}>
-                  Delete
-                </Button>
-              </div>
-            </div>
-          )
+          data && personalDetails
         )}
       </div>
 

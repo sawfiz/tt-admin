@@ -19,7 +19,6 @@ import InputGroup from 'react-bootstrap/InputGroup';
 const DynamicList = ({
   fetchDataFunction,
   dataKey,
-  // buttonComponent,
   filterOptions,
 }) => {
   const navigate = useNavigate();

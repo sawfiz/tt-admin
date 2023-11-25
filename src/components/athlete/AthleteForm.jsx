@@ -1,5 +1,5 @@
 // Libraries
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 
@@ -41,7 +41,12 @@ const AthleteForm = ({ title }) => {
   // If an id is provided in the route, GET data of the athlete
   useEffect(() => {
     const fetchData = async () => {
-      const response = await httpRequest('GET', `/api/athletes/${id}`, null, 'athlete');
+      const response = await httpRequest(
+        'GET',
+        `/api/athletes/${id}`,
+        null,
+        'athlete'
+      );
 
       if (response.error) {
         displayErrorModal(response);
@@ -127,12 +132,18 @@ const AthleteForm = ({ title }) => {
   };
 
   const handleFormErrors = (response) => {
-    console.log("🚀 ~ file: AthleteForm.jsx:130 ~ handleFormErrors ~ response:", response)
+    console.log(
+      '🚀 ~ file: AthleteForm.jsx:130 ~ handleFormErrors ~ response:',
+      response
+    );
     if (response.status === 400) {
       // Handle backend validation validationErrors
       // const validationErrors = JSON.parse(response).errors.map((err) => ({
-        const errors = JSON.parse(response.error)
-        console.log("🚀 ~ file: AthleteForm.jsx:135 ~ //validationErrors ~ errors:", errors)
+      const errors = JSON.parse(response.error);
+      console.log(
+        '🚀 ~ file: AthleteForm.jsx:135 ~ //validationErrors ~ errors:',
+        errors
+      );
       const validationErrors = JSON.parse(response.error).errors.map((err) => ({
         path: err.path,
         msg: err.msg,
