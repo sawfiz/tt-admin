@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 // Styling
 import { Button, Modal } from 'react-bootstrap';
 
-export default function UserPersonalDetails({
+export default function VisitorPersonalDetails({
   id,
   data,
   type,

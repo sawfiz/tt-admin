@@ -9,7 +9,7 @@ import { useModal, InfoModal } from '../contexts/ModalContext';
 
 // Components
 import AtheletPersonalDetails from './athlete/AtheletPersonalDetails';
-import UserPersonalDetails from './user/UserPersonalDetails';
+import VisitorPersonalDetails from './user/VisitorPersonalDetails';
 
 // Utilities
 import { httpRequest } from '../utils/apiServices';
@@ -94,7 +94,7 @@ export default function DynamicDetails({ type, id }) {
   };
 
   let personalDetails;
-  if (type === 'athlete')
+  if (manageType === 'athlete')
     personalDetails = (
       <AtheletPersonalDetails
         id={id}
@@ -103,9 +103,9 @@ export default function DynamicDetails({ type, id }) {
         handleShowDeleteModal={handleShowDeleteModal}
       />
     );
-  if (type === 'user')
+  if (manageType === 'visitor')
     personalDetails = (
-      <UserPersonalDetails
+      <VisitorPersonalDetails
         id={id}
         data={data}
         type={type}
