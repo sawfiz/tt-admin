@@ -35,7 +35,7 @@ main {
   margin: auto;
   padding: 1rem;
   position: relative;
-  min-height: calc(100vh - 1rem);
+  min-height: calc(100vh - 5rem);
 }
 
 h2 {
