@@ -56,7 +56,36 @@ export default function AttendanceForm() {
 
   const handleClose = () => {};
 
-  const handleSubmit = async (e) => {};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(formData);
+  };
+
+  const coaches = (
+    <DynamicList
+      fetchDataFunction={() => httpRequest('GET', '/api/athletes')}
+      dataKey="athletes"
+      filterOptions={'name'}
+      list={attendeeList}
+      addItem={addAttendee}
+      removeItem={removeAttendee}
+      showButtons={false}
+      showFilter={false}
+    />
+  );
+
+  const athletes = (
+    <DynamicList
+      fetchDataFunction={() => httpRequest('GET', '/api/athletes')}
+      dataKey="athletes"
+      filterOptions={'name'}
+      list={attendeeList}
+      addItem={addAttendee}
+      removeItem={removeAttendee}
+      showButtons={false}
+      showFilter={true}
+    />
+  );
 
   return (
     <main>
@@ -90,28 +119,13 @@ export default function AttendanceForm() {
           </Form.Select>
         </InputGroup>
 
-        {/* <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 outline-dashed outline-2 outline-pink-300 p-1'> */}
-        {/* {athletes.map((athlete) => {
-          return (
-            <Attendee
-              key={athlete.id}
-              attendeeList={attendeeList}
-              athlete={athlete}
-              addAttendee={addAttendee}
-              removeAttendee={removeAttendee}
-            />
-          );
-        })} */}
-        <DynamicList
-          fetchDataFunction={() => httpRequest('GET', '/api/athletes')}
-          dataKey="athletes"
-          filterOptions={'name'}
-          list = {attendeeList}
-          addItem = {addAttendee}
-          removeItem = {removeAttendee}
-          showButtons={false}
-        />
-        {/* </div> */}
+        <hr></hr>
+        <h4>Coaches</h4>
+        {coaches}
+
+        <hr></hr>
+        <h4>Athletes</h4>
+        {athletes}
 
         <div className="m-4 flex justify-around">
           <Button variant="primary" onClick={handleSubmit}>

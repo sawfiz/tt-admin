@@ -24,7 +24,8 @@ const DynamicList = ({
   list,
   addItem,
   removeItem,
-  showButtons
+  showButtons,
+  showFilter,
 }) => {
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
@@ -97,10 +98,18 @@ const DynamicList = ({
     <DynamicButton key={item._id} data={item} dataKey={dataKey} />
   ));
 
-  const checkboxs = list ? filteredData.map((item) => (
-    // <DynamicButton key={item._id} data={item} component={buttonComponent} />
-    <DynamicCheckBox key={item._id} data={item} list={list} addItem={addItem} removeItem={removeItem} />
-  )) : null;
+  const checkboxs = list
+    ? filteredData.map((item) => (
+        // <DynamicButton key={item._id} data={item} component={buttonComponent} />
+        <DynamicCheckBox
+          key={item._id}
+          data={item}
+          list={list}
+          addItem={addItem}
+          removeItem={removeItem}
+        />
+      ))
+    : null;
 
   return (
     <div>
@@ -111,45 +120,47 @@ const DynamicList = ({
       ) : (
         data && (
           <div>
-            {/* Search athlete based on name */}
-            <InputGroup className="mb-3">
-              <InputGroup.Text>🔍</InputGroup.Text>
-              <Form.Control
-                autoFocus
-                placeholder="Name"
-                value={searchText}
-                onChange={handleSearch}
-              />
-            </InputGroup>
-
-            {/* Active and gender filters */}
-            <div className="flex justify-around items-center my-3">
-              {/* Checkbox for active athletes only */}
+            {showFilter && (
               <div>
-                <input
-                  type="checkbox"
-                  checked={activeOnly}
-                  onChange={(e) => setActiveOnly(e.target.checked)}
-                />{' '}
-                <span className="text-slate-800">Active only </span>
+                {/* Search athlete based on name */}
+                <InputGroup className="mb-3">
+                  <InputGroup.Text>🔍</InputGroup.Text>
+                  <Form.Control
+                    autoFocus
+                    placeholder="Name"
+                    value={searchText}
+                    onChange={handleSearch}
+                  />
+                </InputGroup>
+                {/* Active and gender filters */}
+                <div className="flex justify-around items-center my-3">
+                  {/* Checkbox for active athletes only */}
+                  <div>
+                    <input
+                      type="checkbox"
+                      checked={activeOnly}
+                      onChange={(e) => setActiveOnly(e.target.checked)}
+                    />{' '}
+                    <span className="text-slate-800">Active only </span>
+                  </div>
+                  {/* Filter athletes based on gender */}
+                  <div>
+                    <select
+                      type=""
+                      onChange={(e) => setSelectedGender(e.target.value)}
+                    >
+                      <option value="">M & F</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                  </div>
+                </div>
               </div>
-
-              {/* Filter athletes based on gender */}
-              <div>
-                <select
-                  type=""
-                  onChange={(e) => setSelectedGender(e.target.value)}
-                >
-                  <option value="">M & F</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                </select>
-              </div>
-            </div>
+            )}
 
             {/* Filtered athlete list */}
             <div className="grid grid-cols-2 gap-[10px] md:grid-cols-3 lg:grid-cols-4 mb-4">
-              {showButtons ? buttons :checkboxs}
+              {showButtons ? buttons : checkboxs}
             </div>
           </div>
         )
