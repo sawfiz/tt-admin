@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import { Button, Modal } from 'react-bootstrap';
 
 export default function VisitorPersonalDetails({ data }) {
-  console.log("🚀 ~ file: VisitorPersonalDetails.jsx:9 ~ VisitorPersonalDetails ~ data:", data)
   const imgSrc =
     data.photoURL ||
     (data.gender === 'male'

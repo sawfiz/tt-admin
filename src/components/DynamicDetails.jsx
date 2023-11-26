@@ -18,7 +18,6 @@ import { httpRequest } from '../utils/apiServices';
 import { Button, Modal } from 'react-bootstrap';
 
 export default function DynamicDetails({ type, id }) {
-  const manageType = type === 'user' ? 'visitor' : type;
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
   const { showModal, closeModal } = useModal();
@@ -27,6 +26,10 @@ export default function DynamicDetails({ type, id }) {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [backlink, setBacklink] = useState(null);
+  const [backlinkname, setBacklinkname] = useState(null);
+  const [personalDetailsEl, setPersonalDetailsEl] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,6 +49,16 @@ export default function DynamicDetails({ type, id }) {
         setErrorMsg(`${response.error} ${response.errorMsg}`);
       } else {
         setData(response[type]);
+        if (type === 'athlete') {
+          setBacklink('/manage-athletes');
+          setBacklinkname('Athletes');
+          setPersonalDetailsEl(<AtheletPersonalDetails data={response[type]} />);
+        } else {
+          const role = response[type].role;
+          setBacklink(`/manage-${role}${role==='coach'?'e':''}s`);
+          setBacklinkname(`${role}${role==='coach'?'e':''}s`);
+          setPersonalDetailsEl(<VisitorPersonalDetails data={response[type]} />);
+        }
       }
     };
 
@@ -76,7 +89,7 @@ export default function DynamicDetails({ type, id }) {
       // Send API request to delete the athlete
       await httpRequest('DELETE', `/api/${type}s/${id}`);
       // Redirect or perform any other action upon successful deletion
-      navigate(`/manage-${manageType}s`); // Redirect to athletes page after deletion
+      navigate(`/manage-${type}s`); // Redirect to athletes page after deletion
     } catch (error) {
       console.error('Error deleting athlete:', error);
       // Handle error state or show an error message to the user
@@ -87,20 +100,6 @@ export default function DynamicDetails({ type, id }) {
     handleCloseModal(); // Close the modal
     handleDelete(); // Trigger the delete function
   };
-
-  let personalDetails;
-  if (manageType === 'athlete')
-    personalDetails = (
-      <AtheletPersonalDetails
-        data={data}
-      />
-    );
-  if (manageType === 'visitor')
-    personalDetails = (
-      <VisitorPersonalDetails
-        data={data}
-      />
-    );
 
   const buttons = (
     <div className="flex justify-around">
@@ -115,8 +114,8 @@ export default function DynamicDetails({ type, id }) {
 
   return (
     <div>
-      <Link to={`/manage-${manageType}s`}>
-        <Button variant="outline-secondary">⬅️ {`${manageType}s`}</Button>
+      <Link to={backlink}>
+        <Button variant="outline-secondary">⬅️ {backlinkname}</Button>
       </Link>
       <div>
         {loading ? (
@@ -126,10 +125,10 @@ export default function DynamicDetails({ type, id }) {
         ) : (
           data && (
             <>
-            {personalDetails}
-            {buttons}
+              {personalDetailsEl}
+              {buttons}
             </>
-            )
+          )
         )}
       </div>
 

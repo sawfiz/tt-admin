@@ -23,6 +23,7 @@ import ManageAthletes from '../components/athlete/ManageAthletes';
 import AthleteDetails from '../components/athlete/AthleteDetails';
 import AthleteForm from '../components/athlete/AthleteForm';
 
+import ManageCoaches from '../components/user/ManageCoaches';
 import ManageParents from '../components/user/ManageParents';
 import ManageVisitors from '../components/user/ManageVisitors';
 import UserDetails from '../components/user/UserDetails';
@@ -54,6 +55,7 @@ const routes = createRoutesFromElements(
       <Route path="/attendance/new" element={<AttendanceForm />} />
 
 
+      <Route path="/manage-coaches" element={<ManageCoaches />} />
       <Route path="/manage-parents" element={<ManageParents />} />
       <Route path="/manage-visitors" element={<ManageVisitors />} />
       <Route path="/users/:id" element={<UserDetails />} />

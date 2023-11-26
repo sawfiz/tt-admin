@@ -20,6 +20,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 const DynamicList = ({
   fetchDataFunction,
   dataKey,
+  role,
   list,
   addItem,
   removeItem,
