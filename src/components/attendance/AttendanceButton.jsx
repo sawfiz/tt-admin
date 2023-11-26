@@ -9,7 +9,7 @@ export default function AttendanceButton(data, dataKey) {
   );
   return (
     <Link
-      to={`/${dataKey}/${data._id}`}
+      to={`/${data.dataKey}/${data.data._id}`}
       className="no-underline text-slate-700"
     >
       <div className="h-10 outline-dashed outline-1 outline-pink-300 flex justify-between items-center p-1">

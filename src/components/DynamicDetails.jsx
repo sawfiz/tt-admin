@@ -10,6 +10,7 @@ import { useModal, InfoModal } from '../contexts/ModalContext';
 // Components
 import AtheletPersonalDetails from './athlete/AtheletPersonalDetails';
 import VisitorPersonalDetails from './user/VisitorPersonalDetails';
+import AttendanceFineDetails from './attendance/AttendanceFineDetails';
 
 // Utilities
 import { httpRequest } from '../utils/apiServices';
@@ -53,11 +54,18 @@ export default function DynamicDetails({ type, id }) {
           setBacklink('/manage-athletes');
           setBacklinkname('Athletes');
           setPersonalDetailsEl(<AtheletPersonalDetails data={response[type]} />);
-        } else {
+        }
+        if (type==='user') {
           const role = response[type].role;
           setBacklink(`/manage-${role}${role==='coach'?'e':''}s`);
           setBacklinkname(`${role}${role==='coach'?'e':''}s`);
           setPersonalDetailsEl(<VisitorPersonalDetails data={response[type]} />);
+        }
+        if (type==='attendance') {
+          const role = response[type].role;
+          setBacklink('/manage-attendances');
+          setBacklinkname('Attendances');
+          setPersonalDetailsEl(<AttendanceFineDetails data={response[type]} />);
         }
       }
     };
