@@ -89,7 +89,7 @@ export default function DynamicDetails({ type, id }) {
       // Send API request to delete the athlete
       await httpRequest('DELETE', `/api/${type}s/${id}`);
       // Redirect or perform any other action upon successful deletion
-      navigate(`/manage-${type}s`); // Redirect to athletes page after deletion
+      navigate(backlink);
     } catch (error) {
       console.error('Error deleting athlete:', error);
       // Handle error state or show an error message to the user
