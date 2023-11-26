@@ -19,9 +19,9 @@ const ManageAttendances = () => {
         <Button style={{ margin: '1rem 0' }}>Add Attendance</Button>
       </Link>
       <DynamicList
-        fetchDataFunction={() => httpRequest('GET', '/api/athletes')}
-        dataKey="athletes"
-        filterOptions={'name'}
+        fetchDataFunction={() => httpRequest('GET', '/api/attendances')}
+        dataKey="attendances"
+        showAttendances={true}
       />
     </main>
   );

@@ -21,7 +21,6 @@ const ManageAthletes = () => {
       <DynamicList
         fetchDataFunction={() => httpRequest('GET', '/api/athletes')}
         dataKey="athletes"
-        filterOptions={'name'}
         showButtons={true}
         showFilter={true}
       />

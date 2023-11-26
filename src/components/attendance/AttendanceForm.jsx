@@ -25,18 +25,18 @@ export default function AttendanceForm() {
   );
   const [formData, setFormData] = useState({
     date: today,
-    stadium: '',
+    venue: '',
     coachList: [],
     attendeeList: [],
   });
-  const { date, stadium, coachList, attendeeList } = formData;
+  const { date, venue, coachList, attendeeList } = formData;
 
   const fetchDataOnChange = async (day, std) => {};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'date') fetchDataOnChange(value); // value is the new date
-    if (name === 'stadium') fetchDataOnChange(date, value); // value is the new stadium
+    if (name === 'venue') fetchDataOnChange(date, value); // value is the new venue
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -68,7 +68,17 @@ export default function AttendanceForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    console.log('Perform POST request:', formData);
+    const response = await httpRequest('POST', '/api/attendances', formData);
+    if (response.error) {
+      console.log("🚀 ~ file: AttendanceForm.jsx:74 ~ handleSubmit ~ response.error:", response.error)
+
+      // handleFormErrors(response);
+    } else {
+      // Handle success, reset form, or navigate to a different page
+      console.log('Athlete created successfully:', response);
+      navigate('/manage-athletes');
+    }
   };
 
   const coaches = (
@@ -78,7 +88,7 @@ export default function AttendanceForm() {
       list={coachList}
       addItem={addCoach}
       removeItem={removeCoach}
-      showButtons={false}
+      showCheckboxes={true}
       showFilter={false}
     />
   );
@@ -90,7 +100,7 @@ export default function AttendanceForm() {
       list={attendeeList}
       addItem={addAttendee}
       removeItem={removeAttendee}
-      showButtons={false}
+      showCheckboxes={true}
       showFilter={true}
     />
   );
@@ -112,11 +122,11 @@ export default function AttendanceForm() {
           />
         </InputGroup>
         <InputGroup className="mb-3">
-          <InputGroup.Text id="basic-addon1">Stadium </InputGroup.Text>
+          <InputGroup.Text id="basic-addon1">Venue </InputGroup.Text>
           <Form.Select
             required
-            name="stadium"
-            value={stadium}
+            name="venue"
+            value={venue}
             onChange={handleChange}
           >
             <option></option>

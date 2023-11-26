@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 // Components
 import DynamicButton from './DynamicButton';
 import DynamicCheckBox from './DynamicCheckBox';
+import AttendanceButton from './attendance/AttendanceButton';
 
 // Contexts
 import { AuthContext } from '../contexts/AuthContext';
@@ -25,6 +26,8 @@ const DynamicList = ({
   addItem,
   removeItem,
   showButtons,
+  showCheckboxes,
+  showAttendances,
   showFilter,
 }) => {
   const navigate = useNavigate();
@@ -91,14 +94,19 @@ const DynamicList = ({
     return nameIncludesText && isGenderMatch && isActiveMatch;
   };
 
-  const filteredData = data ? data.filter(filterData) : [];
+  const filteredData =
+    data && showFilter === true ? data.filter(filterData) : data;
 
   const buttons = filteredData.map((item) => (
     // <DynamicButton key={item._id} data={item} component={buttonComponent} />
     <DynamicButton key={item._id} data={item} dataKey={dataKey} />
   ));
+  const attendanceButtons = filteredData.map((item) => (
+    // <DynamicButton key={item._id} data={item} component={buttonComponent} />
+    <AttendanceButton key={item._id} data={item} dataKey={dataKey} />
+  ));
 
-  const checkboxs = list
+  const checkboxes = list
     ? filteredData.map((item) => (
         // <DynamicButton key={item._id} data={item} component={buttonComponent} />
         <DynamicCheckBox
@@ -158,10 +166,20 @@ const DynamicList = ({
               </div>
             )}
 
-            {/* Filtered athlete list */}
-            <div className="grid grid-cols-2 gap-[7px] md:grid-cols-3 lg:grid-cols-4 mb-4">
-              {showButtons ? buttons : checkboxs}
-            </div>
+            {/* Filtered athlete / user list */}
+            {showButtons && (
+              <div className="grid grid-cols-2 gap-[7px] md:grid-cols-3 lg:grid-cols-4 mb-4">
+                {buttons}
+              </div>
+            )}
+            {/* Filtered athlete / user list */}
+            {showCheckboxes && (
+              <div className="grid grid-cols-2 gap-[7px] md:grid-cols-3 lg:grid-cols-4 mb-4">
+                {checkboxes}
+              </div>
+            )}
+            {/* Attendance List */}
+            {showAttendances && <div className="mb-4">{attendanceButtons}</div>}
           </div>
         )
       )}
