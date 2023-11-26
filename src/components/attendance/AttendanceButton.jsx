@@ -3,10 +3,6 @@ import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 
 export default function AttendanceButton(data, dataKey) {
-  console.log(
-    '🚀 ~ file: AttendanceButton.jsx:5 ~ AttendanceButton ~ data:',
-    data
-  );
   return (
     <Link
       to={`/${data.dataKey}/${data.data._id}`}
