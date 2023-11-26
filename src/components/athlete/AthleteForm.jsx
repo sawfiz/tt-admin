@@ -44,14 +44,13 @@ const AthleteForm = ({ title }) => {
       const response = await httpRequest(
         'GET',
         `/api/athletes/${id}`,
-        null,
-        'athlete'
       );
+      console.log("🚀 ~ file: AthleteForm.jsx:48 ~ fetchData ~ response:", response)
 
       if (response.error) {
         displayErrorModal(response);
       } else {
-        setFormData(response);
+        setFormData(response.athlete);
       }
     };
 

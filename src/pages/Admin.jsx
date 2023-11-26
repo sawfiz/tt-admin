@@ -55,7 +55,7 @@ export default function Admin() {
               </Link>
             </Button>
             <Button variant="info">
-              <Link to="/parents" className="no-underline">
+              <Link to="/manage-parents" className="no-underline">
                 <div className="grid grid-rows-[2fr_1fr]">
                   <div className=" text-[2rem] drop-shadow-[1px_1px_2px_rgba(0,0,0,0.9)] ">
                     👨🏻👩🏻

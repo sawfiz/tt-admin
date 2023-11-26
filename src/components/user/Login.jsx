@@ -28,9 +28,9 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("🚀 ~ file: Login.jsx:32 ~ handleSubmit ~ formData:", formData)
+    setLoading(true)
     const response = await httpRequest('POST', '/login', formData );
-    console.log('🚀 ~ file: Login.jsx:32 ~ handleSubmit ~ response:', response);
+    setLoading(false)
 
     if (response.error) {
       // Handle error and show modal

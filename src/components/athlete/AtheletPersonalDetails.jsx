@@ -1,17 +1,8 @@
 // Libraries
-import React from 'react';
-import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
-// Styling
-import { Button, Modal } from 'react-bootstrap';
-
-export default function AtheletPersonalDetails({
-  id,
-  data,
-  type,
-  handleShowDeleteModal,
-}) {
+export default function AtheletPersonalDetails({ data }) {
+  console.log('🚀 ~ file: AtheletPersonalDetails.jsx:16 ~ data:', data);
   const imgSrc = data
     ? data.photoURL ||
       (data.gender === 'male'
@@ -53,16 +44,6 @@ export default function AtheletPersonalDetails({
         <div>{data.father}</div>
         <div className=" font-bold">Mother</div>
         <div>{data.mother}</div>
-      </div>
-
-      {/* Buttons */}
-      <div className="flex justify-around">
-        <Link to={`/${type}/update/${id}`}>
-          <Button variant="primary">Update</Button>
-        </Link>
-        <Button variant="danger" onClick={handleShowDeleteModal}>
-          Delete
-        </Button>
       </div>
     </div>
   );

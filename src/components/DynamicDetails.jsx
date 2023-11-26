@@ -30,12 +30,7 @@ export default function DynamicDetails({ type, id }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await httpRequest(
-        'GET',
-        `/api/${type}s/${id}`,
-        null,
-        type
-      );
+      const response = await httpRequest('GET', `/api/${type}s/${id}`);
 
       if (response.error) {
         // Display the model. If error is token timed out, click on button logs the user out.
@@ -50,7 +45,7 @@ export default function DynamicDetails({ type, id }) {
         );
         setErrorMsg(`${response.error} ${response.errorMsg}`);
       } else {
-        setData(response);
+        setData(response[type]);
       }
     };
 
@@ -97,21 +92,26 @@ export default function DynamicDetails({ type, id }) {
   if (manageType === 'athlete')
     personalDetails = (
       <AtheletPersonalDetails
-        id={id}
         data={data}
-        type={type}
-        handleShowDeleteModal={handleShowDeleteModal}
       />
     );
   if (manageType === 'visitor')
     personalDetails = (
       <VisitorPersonalDetails
-        id={id}
         data={data}
-        type={type}
-        handleShowDeleteModal={handleShowDeleteModal}
       />
     );
+
+  const buttons = (
+    <div className="flex justify-around">
+      <Link to={`/${type}/update/${id}`}>
+        <Button variant="primary">Update</Button>
+      </Link>
+      <Button variant="danger" onClick={handleShowDeleteModal}>
+        Delete
+      </Button>
+    </div>
+  );
 
   return (
     <div>
@@ -124,7 +124,12 @@ export default function DynamicDetails({ type, id }) {
         ) : errorMsg ? (
           <p className="text-danger">{errorMsg}</p>
         ) : (
-          data && personalDetails
+          data && (
+            <>
+            {personalDetails}
+            {buttons}
+            </>
+            )
         )}
       </div>
 
