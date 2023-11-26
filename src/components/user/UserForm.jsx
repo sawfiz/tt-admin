@@ -85,7 +85,6 @@ const UserForm = ({ title }) => {
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
 
-
     let inputValue;
     if (type === 'checkbox') {
       inputValue = checked;
@@ -97,7 +96,7 @@ const UserForm = ({ title }) => {
       ...prevFormData,
       [name]: inputValue,
     }));
-    
+
     if (name === 'password1') {
       setFormData((prevFormData) => ({ ...prevFormData, password: value }));
     }
@@ -193,7 +192,7 @@ const UserForm = ({ title }) => {
 
   const handleCancel = () => {
     if (title === 'Create') {
-      navigate('/manage-users');
+      navigate('/');
     }
     navigate(`/users/${id}`);
     // In case of Update, the cancel button is automatically handled
@@ -288,63 +287,90 @@ const UserForm = ({ title }) => {
         </div>
         {showValidationError('email')}
 
-        <hr />
-
-        <div className="flex justify-between w-80 items-center mb-2">
+        {title === 'Create' && (
           <div>
-            <label>Username</label>
+            <hr />
+            <div className="flex justify-between w-80 items-center mb-2">
+              <div>
+                <label>Username</label>
+              </div>
+              <input
+                type="text"
+                name="username"
+                placeholder="Username"
+                value={formData.username}
+                onChange={handleChange}
+                required
+                autoComplete="true"
+                className="px-1 w-40"
+              />
+            </div>
+            {showValidationError('username')}
+            <div className="flex justify-between w-80 items-center mb-2">
+              <div>
+                <label>New password</label>
+              </div>
+              <input
+                type="password"
+                name="password1"
+                placeholder="Password"
+                value={formData.password1}
+                onChange={handleChange}
+                required
+                autoComplete="true"
+                className="px-1 w-40"
+              />
+            </div>
+            {showValidationError('password')}
+            <div className="flex justify-between w-80 items-center mb-2">
+              <div>
+                <label>Re-enter password</label>
+              </div>
+              <input
+                type="password"
+                name="password2"
+                placeholder="Password"
+                value={formData.password2}
+                onChange={handleChange}
+                required
+                autoComplete="true"
+                className="px-1 w-40"
+              />
+            </div>
+            {match ? (
+              ''
+            ) : (
+              <p className="text-danger">Passwords do not match.</p>
+            )}
           </div>
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-            autoComplete="true"
-            className="px-1 w-40"
-          />
-        </div>
-        {showValidationError('username')}
+        )}
 
-        <div className="flex justify-between w-80 items-center mb-2">
-          <div>
-            <label>New password</label>
+        {title==="Update" && (<div>
+          <div className="flex justify-between w-80 items-center mb-2">
+            <div>
+              <label>Role</label>
+            </div>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              required
+              className="p-1 ml-4 w-20"
+            >
+              <option value="">-</option>
+              <option value="visitor">Visitor</option>
+              <option value="parent">Parent</option>
+              <option value="coach">Coach</option>
+            </select>
           </div>
-          <input
-            type="password"
-            name="password1"
-            placeholder="Password"
-            value={formData.password1}
-            onChange={handleChange}
-            required
-            autoComplete="true"
-            className="px-1 w-40"
-          />
+        </div>)}
+
+        <div className="flex justify-around">
+          <Button type="submit">{title}</Button>
+          <Button variant="secondary" type="cancel" onClick={handleCancel}>
+            Cancel
+          </Button>
         </div>
-        {showValidationError('password')}
-
-        <div className="flex justify-between w-80 items-center mb-2">
-          <div>
-            <label>Re-enter password</label>
-          </div>
-          <input
-            type="password"
-            name="password2"
-            placeholder="Password"
-            value={formData.password2}
-            onChange={handleChange}
-            required
-            autoComplete="true"
-            className="px-1 w-40"
-          />
-        </div>
-
-        {match ? '' : <p className="text-danger">Passwords do not match.</p>}
-
-        <Button type="submit" className="mt-2">
-          Submit
-        </Button>
       </Form>
       {loading && <p>Submitting...</p>}
     </main>

@@ -5,10 +5,11 @@ export const httpRequest = async (
   method = 'GET',
   endpoint,
   data = null,
-  dataKey = null
+  filter = null
 ) => {
   try {
-    const url = `${BASE_URL}${endpoint}`;
+    // const url = `${BASE_URL}${endpoint}`;
+    const url = `${BASE_URL}${endpoint}${filter ? `?role=${filter}` : ''}`;
     const headers = constructHeaders();
 
     const options = {
@@ -25,11 +26,7 @@ export const httpRequest = async (
     const result = await response.json();
     if (!response.ok) throwError(response, result);
 
-    if (method === 'GET' && dataKey) {
-      return result[dataKey];
-    } else {
       return result;
-    }
   } catch (error) {
     return {
       status: error.status || 500,

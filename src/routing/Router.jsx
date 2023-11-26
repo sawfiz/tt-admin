@@ -25,6 +25,7 @@ import AthleteForm from '../components/athlete/AthleteForm';
 
 import ManageVisitors from '../components/user/ManageVisitors';
 import UserDetails from '../components/user/UserDetails';
+import UserForm from '../components/user/UserForm';
 
 const routes = createRoutesFromElements(
   <Route path="/" element={<RootLayout />}>
@@ -54,6 +55,10 @@ const routes = createRoutesFromElements(
 
       <Route path="/manage-visitors" element={<ManageVisitors />} />
       <Route path="/users/:id" element={<UserDetails />} />
+      <Route
+        path="/user/update/:id"
+        element={<UserForm title="Update" />}
+      />
     </Route>
   </Route>
 );

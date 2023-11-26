@@ -28,7 +28,8 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await httpRequest('POST', '/login', formData, setLoading);
+    console.log("🚀 ~ file: Login.jsx:32 ~ handleSubmit ~ formData:", formData)
+    const response = await httpRequest('POST', '/login', formData );
     console.log('🚀 ~ file: Login.jsx:32 ~ handleSubmit ~ response:', response);
 
     if (response.error) {

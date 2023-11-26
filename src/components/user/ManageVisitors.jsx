@@ -16,9 +16,8 @@ const ManageVisitors = () => {
     <main>
       <h2>Manage Visitors</h2>
       <DynamicList
-        fetchDataFunction={() => httpRequest('GET', '/api/users')}
+        fetchDataFunction={() => httpRequest('GET', '/api/users', null, 'visitor')}
         dataKey="users"
-        filterOptions={'username'}
         showButtons={true}
         showFilter={true}
       />
