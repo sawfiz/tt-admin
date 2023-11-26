@@ -73,9 +73,8 @@ export default function AttendanceForm() {
 
   const coaches = (
     <DynamicList
-      fetchDataFunction={() => httpRequest('GET', '/api/athletes')}
-      dataKey="athletes"
-      filterOptions={'name'}
+      fetchDataFunction={() => httpRequest('GET', '/api/users', null, 'coach')}
+      dataKey="users"
       list={coachList}
       addItem={addCoach}
       removeItem={removeCoach}
@@ -88,7 +87,6 @@ export default function AttendanceForm() {
     <DynamicList
       fetchDataFunction={() => httpRequest('GET', '/api/athletes')}
       dataKey="athletes"
-      filterOptions={'name'}
       list={attendeeList}
       addItem={addAttendee}
       removeItem={removeAttendee}
@@ -117,7 +115,6 @@ export default function AttendanceForm() {
           <InputGroup.Text id="basic-addon1">Stadium </InputGroup.Text>
           <Form.Select
             required
-            // isInvalid={isStadiumEmpty}
             name="stadium"
             value={stadium}
             onChange={handleChange}
