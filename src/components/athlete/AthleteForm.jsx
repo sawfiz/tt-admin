@@ -23,6 +23,7 @@ const AthleteForm = ({ title }) => {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
   const [validationErrors, setValidationErrors] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const [formData, setFormData] = useState({
     first_name: '',
@@ -35,17 +36,17 @@ const AthleteForm = ({ title }) => {
     email: '',
     school: '',
     active: true,
-    photoUrl: '',
+    avatar: null,
   });
 
   // If an id is provided in the route, GET data of the athlete
   useEffect(() => {
     const fetchData = async () => {
-      const response = await httpRequest(
-        'GET',
-        `/api/athletes/${id}`,
+      const response = await httpRequest('GET', `/api/athletes/${id}`);
+      console.log(
+        '🚀 ~ file: AthleteForm.jsx:48 ~ fetchData ~ response:',
+        response
       );
-      console.log("🚀 ~ file: AthleteForm.jsx:48 ~ fetchData ~ response:", response)
 
       if (response.error) {
         displayErrorModal(response);
@@ -83,16 +84,20 @@ const AthleteForm = ({ title }) => {
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
-    let inputValue;
-    if (type === 'checkbox') {
-      inputValue = checked;
+
+    if (type === 'file') {
+      const file = event.target.files[0];
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        avatar: file, // Save the selected file to state
+      }));
     } else {
-      inputValue = value;
+      const inputValue = type === 'checkbox' ? checked : value;
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: inputValue,
+      }));
     }
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: inputValue,
-    }));
   };
 
   const handleSubmit = (event) => {
@@ -180,7 +185,7 @@ const AthleteForm = ({ title }) => {
 
   return (
     <main>
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} encType="multipart/form-data">
         <h2>{title} Athlete</h2>
 
         {/* Input fields */}
@@ -240,6 +245,16 @@ const AthleteForm = ({ title }) => {
           />
         </InputGroup>
         {showValidationError('birthdate')}
+
+        <InputGroup className="mb-2">
+          <InputGroup.Text>Photo </InputGroup.Text>
+          <Form.Control
+            type="file"
+            name="avatar"
+            accept="image/*"
+            onChange={handleChange}
+          />
+        </InputGroup>
 
         <InputGroup className="mb-3">
           <InputGroup.Text id="mobile">Mobile</InputGroup.Text>
