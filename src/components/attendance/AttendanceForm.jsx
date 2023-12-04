@@ -77,7 +77,7 @@ export default function AttendanceForm() {
     } else {
       // Handle success, reset form, or navigate to a different page
       console.log('Athlete created successfully:', response);
-      navigate('/manage-athletes');
+      navigate('/manage-attendances');
     }
   };
 
