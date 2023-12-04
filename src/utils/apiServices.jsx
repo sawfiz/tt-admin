@@ -10,9 +10,9 @@ export const httpRequest = async (
   filter = null
 ) => {
   try {
-    // const url = `${BASE_URL}${endpoint}`;
     const url = `${BASE_URL}${endpoint}${filter ? `?role=${filter}` : ''}`;
-    const headers = constructHeaders();
+    const headers = constructHeaders(data);
+    console.log("🚀 ~ file: apiServices.jsx:15 ~ headers:", headers)
 
     const options = {
       method,
@@ -29,12 +29,6 @@ export const httpRequest = async (
       }
     }
 
-    // axios
-    // .post('http://localhost:3000/api/athletes', options)
-    // .then((res) => {})
-    // .catch((er) => console.log(er));
-
-    // const response = await fetch(url, options);
     const response = await axios({
       method,
       url,
@@ -43,11 +37,6 @@ export const httpRequest = async (
     });
     console.log('🚀 ~ file: apiServices.jsx:39 ~ response:', response);
     return response;
-
-    // const result = await response.json();
-    // if (!response.ok) throwError(response, result);
-
-    // return result;
   } catch (error) {
     console.log('🚀 ~ file: apiServices.jsx:47 ~ error:', error);
     return {
@@ -58,10 +47,14 @@ export const httpRequest = async (
   }
 };
 
-const constructHeaders = () => {
-  const headers = {
-    'Content-Type': 'application/json',
-  };
+const constructHeaders = (data) => {
+  const headers = {};
+
+  if (data instanceof FormData) {
+    headers['Content-Type'] = 'multipart/form-data';
+  } else {
+    headers['Content-Type'] = 'application/json';
+  }
 
   // Set the JWT token in the headers with token saved in the localStorage
   const token = localStorage.getItem('token');

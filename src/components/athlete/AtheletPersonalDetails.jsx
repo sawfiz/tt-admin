@@ -1,10 +1,13 @@
 // Libraries
 import { format } from 'date-fns';
 
+// Vite handles .env differently from create-react-app
+const BASE_URL = import.meta.env.VITE_BASE_URL; // Set the base URL
+
 export default function AtheletPersonalDetails({ data }) {
   console.log('🚀 ~ file: AtheletPersonalDetails.jsx:16 ~ data:', data);
   const imgSrc = data
-    ? data.photoURL ||
+    ? `${BASE_URL}/${data.photoUrl}` ||
       (data.gender === 'male'
         ? '/images/boy.png'
         : data.gender === 'female'
@@ -21,7 +24,7 @@ export default function AtheletPersonalDetails({ data }) {
         <img
           className="w-full h-full object-center object-cover rounded-lg "
           src={imgSrc}
-          alt="profile"
+          alt="avatar"
         />
       </div>
       {/* Personal details */}
