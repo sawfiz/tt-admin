@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 // Vite handles .env differently from create-react-app
 const BASE_URL = import.meta.env.VITE_BASE_URL; // Set the base URL
 
@@ -18,16 +20,31 @@ export const httpRequest = async (
     };
 
     if (method !== 'GET' && data) {
-      options.body = JSON.stringify(data);
+      if (data instanceof FormData) {
+        console.log('FormData');
+        // If data is already FormData (for file uploads), use it directly
+        options.body = data;
+      } else {
+        options.body = JSON.stringify(data);
+      }
     }
 
-    const response = await fetch(url, options);
+    // axios
+    // .post('http://localhost:3000/api/athletes', options)
+    // .then((res) => {})
+    // .catch((er) => console.log(er));
 
-    const result = await response.json();
-    if (!response.ok) throwError(response, result);
+    // const response = await fetch(url, options);
+    const response = await axios({method, url, data})
+    console.log("🚀 ~ file: apiServices.jsx:39 ~ response:", response)
+    return response;
 
-      return result;
+    // const result = await response.json();
+    // if (!response.ok) throwError(response, result);
+
+    // return result;
   } catch (error) {
+    console.log("🚀 ~ file: apiServices.jsx:47 ~ error:", error)
     return {
       status: error.status || 500,
       error: error.name,
@@ -37,10 +54,10 @@ export const httpRequest = async (
 };
 
 const constructHeaders = () => {
-  // Construct the GET request headers
   const headers = {
     'Content-Type': 'application/json',
   };
+
   // Set the JWT token in the headers with token saved in the localStorage
   const token = localStorage.getItem('token');
   if (token) {
@@ -51,8 +68,11 @@ const constructHeaders = () => {
 };
 
 const throwError = (response, result) => {
-  console.log("🚀 ~ file: apiServices.jsx:57 ~ throwError ~ response:", response)
-  console.log("🚀 ~ file: apiServices.jsx:57 ~ throwError ~ result:", result)
+  console.log(
+    '🚀 ~ file: apiServices.jsx:57 ~ throwError ~ response:',
+    response
+  );
+  console.log('🚀 ~ file: apiServices.jsx:57 ~ throwError ~ result:', result);
   let message = result.message;
   if (response.status === 400) message = JSON.parse(result.error).errors;
   if (response.status === 409) message = 'Uername already in use.';
@@ -66,6 +86,6 @@ const throwError = (response, result) => {
   const error = new Error(message || 'Failed to POST data.');
   error.name = result.error;
   error.status = response.status;
-  console.log("🚀 ~ file: apiServices.jsx:69 ~ throwError ~ error:", error)
+  console.log('🚀 ~ file: apiServices.jsx:69 ~ throwError ~ error:', error);
   throw error;
 };

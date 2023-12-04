@@ -45,7 +45,7 @@ export default function Login() {
       );
     } else {
       // Set response and the user's name in the AuthContext
-      const name = response.user.name;
+      const name = response.data.user.name;
       login(name);
       // Save the JWT token in localStorage
       const token = response.token;

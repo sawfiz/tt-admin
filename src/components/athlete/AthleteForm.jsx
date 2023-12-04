@@ -112,7 +112,15 @@ const AthleteForm = ({ title }) => {
   const createAthlete = async () => {
     // Logic for creating a new athlete
     console.log('Perform POST request:', formData);
-    const response = await httpRequest('POST', '/api/athletes', formData);
+    const formDataToSend = new FormData();
+
+    // Append each key-value pair from formData to FormData instance
+    for (const key in formData) {
+      formDataToSend.append(key, formData[key]);
+    }
+
+
+    const response = await httpRequest('POST', '/api/athletes', formDataToSend);
     if (response.error) {
       handleFormErrors(response);
     } else {
