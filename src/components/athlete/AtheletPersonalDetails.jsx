@@ -6,14 +6,13 @@ const BASE_URL = import.meta.env.VITE_BASE_URL; // Set the base URL
 
 export default function AtheletPersonalDetails({ data }) {
   console.log('🚀 ~ file: AtheletPersonalDetails.jsx:16 ~ data:', data);
-  const imgSrc = data
-    ? `${BASE_URL}/${data.photoUrl}` ||
-      (data.gender === 'male'
-        ? '/images/boy.png'
-        : data.gender === 'female'
-        ? '/images/girl.png'
-        : '/images/unknown.png')
-    : null;
+  const imgSrc = data.photoUrl
+    ? `${BASE_URL}/${data.photoUrl}`
+    : data.gender === 'male'
+    ? '/images/boy.png'
+    : data.gender === 'female'
+    ? '/images/girl.png'
+    : '/images/unknown.png';
 
   return (
     <div>

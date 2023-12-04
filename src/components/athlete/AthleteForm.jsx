@@ -118,6 +118,7 @@ const AthleteForm = ({ title }) => {
       '/api/athletes',
       convertToFormData(formData)
     );
+    console.log("🚀 ~ file: AthleteForm.jsx:121 ~ createAthlete ~ response:", response)
     if (response.error) {
       handleFormErrors(response);
     } else {
@@ -157,19 +158,10 @@ const AthleteForm = ({ title }) => {
   };
 
   const handleFormErrors = (response) => {
-    console.log(
-      '🚀 ~ file: AthleteForm.jsx:130 ~ handleFormErrors ~ response:',
-      response
-    );
     if (response.status === 400) {
       // Handle backend validation validationErrors
       // const validationErrors = JSON.parse(response).errors.map((err) => ({
-      const errors = JSON.parse(response.error);
-      console.log(
-        '🚀 ~ file: AthleteForm.jsx:135 ~ //validationErrors ~ errors:',
-        errors
-      );
-      const validationErrors = JSON.parse(response.error).errors.map((err) => ({
+      const validationErrors = JSON.parse(response.message).errors.map((err) => ({
         path: err.path,
         msg: err.msg,
       }));

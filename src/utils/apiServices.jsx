@@ -12,7 +12,6 @@ export const httpRequest = async (
   try {
     const url = `${BASE_URL}${endpoint}${filter ? `?role=${filter}` : ''}`;
     const headers = constructHeaders(data);
-    console.log("🚀 ~ file: apiServices.jsx:15 ~ headers:", headers)
 
     const options = {
       method,
@@ -21,7 +20,6 @@ export const httpRequest = async (
 
     if (method !== 'GET' && data) {
       if (data instanceof FormData) {
-        console.log('FormData');
         // If data is already FormData (for file uploads), use it directly
         options.body = data;
       } else {
@@ -35,14 +33,12 @@ export const httpRequest = async (
       data,
       headers: options.headers,
     });
-    console.log('🚀 ~ file: apiServices.jsx:39 ~ response:', response);
     return response;
   } catch (error) {
-    console.log('🚀 ~ file: apiServices.jsx:47 ~ error:', error);
     return {
-      status: error.status || 500,
+      status: error.response.status || 500,
       error: error.name,
-      message: error.message,
+      message: error.response.data.error,
     };
   }
 };
