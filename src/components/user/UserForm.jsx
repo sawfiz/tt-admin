@@ -158,12 +158,12 @@ const UserForm = ({ title }) => {
     if (response.status === 400) {
       // Handle backend validation validationErrors
       // const validationErrors = JSON.parse(response).errors.map((err) => ({
-      const errors = JSON.parse(response.error);
+      const errors = JSON.parse(response.message);
       console.log(
         '🚀 ~ file: userForm.jsx:135 ~ //validationErrors ~ errors:',
         errors
       );
-      const validationErrors = JSON.parse(response.error).errors.map((err) => ({
+      const validationErrors = JSON.parse(response.message).errors.map((err) => ({
         path: err.path,
         msg: err.msg,
       }));
