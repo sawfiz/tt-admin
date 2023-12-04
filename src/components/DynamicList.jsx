@@ -61,7 +61,7 @@ const DynamicList = ({
             />
           );
         } else {
-          setData(response[dataKey + '_list']);
+          setData(response.data[dataKey + '_list']);
         }
       } catch (error) {
         setErrorMsg(error.message || 'An error occurred');

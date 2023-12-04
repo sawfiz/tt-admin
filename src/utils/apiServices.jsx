@@ -35,8 +35,13 @@ export const httpRequest = async (
     // .catch((er) => console.log(er));
 
     // const response = await fetch(url, options);
-    const response = await axios({method, url, data})
-    console.log("🚀 ~ file: apiServices.jsx:39 ~ response:", response)
+    const response = await axios({
+      method,
+      url,
+      data,
+      headers: options.headers,
+    });
+    console.log('🚀 ~ file: apiServices.jsx:39 ~ response:', response);
     return response;
 
     // const result = await response.json();
@@ -44,7 +49,7 @@ export const httpRequest = async (
 
     // return result;
   } catch (error) {
-    console.log("🚀 ~ file: apiServices.jsx:47 ~ error:", error)
+    console.log('🚀 ~ file: apiServices.jsx:47 ~ error:', error);
     return {
       status: error.status || 500,
       error: error.name,

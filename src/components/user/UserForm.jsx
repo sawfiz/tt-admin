@@ -51,7 +51,7 @@ const UserForm = ({ title }) => {
       if (response.error) {
         displayErrorModal(response);
       } else {
-        setFormData(response.user);
+        setFormData(response.data.user);
       }
     };
 

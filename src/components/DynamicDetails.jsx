@@ -49,23 +49,23 @@ export default function DynamicDetails({ type, id }) {
         );
         setErrorMsg(`${response.error} ${response.errorMsg}`);
       } else {
-        setData(response[type]);
+        setData(response.data[type]);
         if (type === 'athlete') {
           setBacklink('/manage-athletes');
           setBacklinkname('Athletes');
-          setPersonalDetailsEl(<AtheletPersonalDetails data={response[type]} />);
+          setPersonalDetailsEl(<AtheletPersonalDetails data={response.data[type]} />);
         }
         if (type==='user') {
-          const role = response[type].role;
+          const role = response.data[type].role;
           setBacklink(`/manage-${role}${role==='coach'?'e':''}s`);
           setBacklinkname(`${role}${role==='coach'?'e':''}s`);
-          setPersonalDetailsEl(<VisitorPersonalDetails data={response[type]} />);
+          setPersonalDetailsEl(<VisitorPersonalDetails data={response.data[type]} />);
         }
         if (type==='attendance') {
-          const role = response[type].role;
+          const role = response.data[type].role;
           setBacklink('/manage-attendances');
           setBacklinkname('Attendances');
-          setPersonalDetailsEl(<AttendanceFineDetails data={response[type]} />);
+          setPersonalDetailsEl(<AttendanceFineDetails data={response.data[type]} />);
         }
       }
     };

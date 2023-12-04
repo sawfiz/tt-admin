@@ -48,7 +48,7 @@ export default function Login() {
       const name = response.data.user.name;
       login(name);
       // Save the JWT token in localStorage
-      const token = response.token;
+      const token = response.data.token;
       localStorage.setItem('token', token);
       navigate('/');
     }

@@ -51,7 +51,7 @@ const AthleteForm = ({ title }) => {
       if (response.error) {
         displayErrorModal(response);
       } else {
-        setFormData(response.athlete);
+        setFormData(response.data.athlete);
       }
     };
 
