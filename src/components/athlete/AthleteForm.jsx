@@ -43,10 +43,6 @@ const AthleteForm = ({ title }) => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await httpRequest('GET', `/api/athletes/${id}`);
-      console.log(
-        '🚀 ~ file: AthleteForm.jsx:48 ~ fetchData ~ response:',
-        response
-      );
 
       if (response.error) {
         displayErrorModal(response);
@@ -144,7 +140,7 @@ const AthleteForm = ({ title }) => {
       handleFormErrors(response);
     } else {
       // Handle success, reset form, or navigate to a different page
-      console.log('Athlete updated successfully:', updateAthlete);
+      console.log('Athlete updated successfully.');
       navigate(`/athletes/${id}`);
     }
   };

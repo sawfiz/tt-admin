@@ -2,14 +2,17 @@
 // Libraries
 import { Link } from 'react-router-dom';
 
+// Vite handles .env differently from create-react-app
+const BASE_URL = import.meta.env.VITE_BASE_URL; // Set the base URL
+
 export default function DynamicButton({ data,  dataKey }) {
-  const imgSrc =
-  data.photoURL ||
-  (data.gender === 'male'
+  const imgSrc = data.photoUrl
+    ? `${BASE_URL}/${data.photoUrl}`
+    : data.gender === 'male'
     ? '/images/boy.png'
     : data.gender === 'female'
     ? '/images/girl.png'
-    : '/images/unknown.png');
+    : '/images/unknown.png';
 
   const image = (
     <img
