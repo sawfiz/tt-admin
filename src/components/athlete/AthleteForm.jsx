@@ -118,7 +118,10 @@ const AthleteForm = ({ title }) => {
       '/api/athletes',
       convertToFormData(formData)
     );
-    console.log("🚀 ~ file: AthleteForm.jsx:121 ~ createAthlete ~ response:", response)
+    console.log(
+      '🚀 ~ file: AthleteForm.jsx:121 ~ createAthlete ~ response:',
+      response
+    );
     if (response.error) {
       handleFormErrors(response);
     } else {
@@ -161,10 +164,12 @@ const AthleteForm = ({ title }) => {
     if (response.status === 400) {
       // Handle backend validation validationErrors
       // const validationErrors = JSON.parse(response).errors.map((err) => ({
-      const validationErrors = JSON.parse(response.message).errors.map((err) => ({
-        path: err.path,
-        msg: err.msg,
-      }));
+      const validationErrors = JSON.parse(response.message).errors.map(
+        (err) => ({
+          path: err.path,
+          msg: err.msg,
+        })
+      );
       setValidationErrors(validationErrors);
     } else {
       // Clear validation errors displayed on page
@@ -191,9 +196,7 @@ const AthleteForm = ({ title }) => {
   const handleCancel = () => {
     if (title === 'Create') {
       navigate('/manage-athletes');
-    }
-    navigate(`/athletes/${id}`);
-    // In case of Update, the cancel button is automatically handled
+    } else navigate(`/athletes/${id}`);
   };
 
   return (
