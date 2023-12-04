@@ -112,15 +112,12 @@ const AthleteForm = ({ title }) => {
   const createAthlete = async () => {
     // Logic for creating a new athlete
     console.log('Perform POST request:', formData);
-    const formDataToSend = new FormData();
 
-    // Append each key-value pair from formData to FormData instance
-    for (const key in formData) {
-      formDataToSend.append(key, formData[key]);
-    }
-
-
-    const response = await httpRequest('POST', '/api/athletes', formDataToSend);
+    const response = await httpRequest(
+      'POST',
+      '/api/athletes',
+      convertToFormData(formData)
+    );
     if (response.error) {
       handleFormErrors(response);
     } else {
@@ -133,7 +130,12 @@ const AthleteForm = ({ title }) => {
   const updateAthlete = async () => {
     // Logic for updating an existing athlete
     console.log('Perform PUT request:', formData);
-    const response = await httpRequest('PUT', `/api/athletes/${id}`, formData);
+
+    const response = await httpRequest(
+      'PUT',
+      `/api/athletes/${id}`,
+      convertToFormData(formData)
+    );
     if (response.error) {
       handleFormErrors(response);
     } else {
@@ -141,6 +143,17 @@ const AthleteForm = ({ title }) => {
       console.log('Athlete updated successfully:', updateAthlete);
       navigate(`/athletes/${id}`);
     }
+  };
+
+  const convertToFormData = (data) => {
+    const formDataToSend = new FormData();
+
+    // Append each key-value pair from formData to FormData instance
+    for (const key in formData) {
+      formDataToSend.append(key, formData[key]);
+    }
+
+    return formDataToSend;
   };
 
   const handleFormErrors = (response) => {
