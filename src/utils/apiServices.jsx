@@ -6,7 +6,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL; // Set the base URL
 export const httpRequest = async (
   method = 'GET',
   endpoint,
-  data = null,
+  data = {},
   filter = null
 ) => {
   try {
